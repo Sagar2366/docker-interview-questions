@@ -2743,65 +2743,77 @@ CMD ["npm", "start"]
 ## 7. How do you run AI/ML models using Docker containers?
 
 ### Answer:
-Docker provides an excellent platform for running AI models with consistent environments and easy deployment.
+Docker provides excellent support for AI/ML workloads with GPU access, model serving capabilities, and integration with popular AI frameworks.
 
-### AI Model Containerization:
+### GPU Support:
+```bash
+# Install NVIDIA Container Toolkit
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+sudo systemctl restart docker
+
+# Run container with GPU
+docker run --gpus all nvidia/cuda:11.8-runtime-ubuntu20.04 nvidia-smi
+
+# Specific GPU
+docker run --gpus device=0 tensorflow/tensorflow:latest-gpu
+```
+
+### Ollama Integration:
+```bash
+# Run Ollama in Docker
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+
+# Pull and run models
+docker exec -it ollama ollama run llama2
+docker exec -it ollama ollama run codellama
+
+# With GPU support
+docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+```
+
+### cAgent (AI Agent Framework):
 ```dockerfile
-# Example Dockerfile for AI model
+# cAgent Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install cagent-framework
+
+COPY agent_config.yaml .
+COPY agents/ ./agents/
+
+EXPOSE 8080
+CMD ["cagent", "serve", "--config", "agent_config.yaml"]
+```
+
+### Model Serving:
+```dockerfile
+# AI Model Dockerfile
 FROM python:3.9-slim
 
 WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Install AI/ML dependencies
-RUN pip install torch torchvision transformers
-
-# Copy model files
 COPY model/ ./model/
 COPY app.py .
 
-# Expose API port
 EXPOSE 8000
-
-# Run AI model server
 CMD ["python", "app.py"]
 ```
 
-### Popular AI Models in Docker:
-```bash
-# Run Hugging Face models
-docker run -p 8000:8000 huggingface/transformers-pytorch-gpu
-
-# Run TensorFlow models
-docker run -p 8501:8501 tensorflow/serving
-
-# Run PyTorch models
-docker run -p 8080:8080 pytorch/pytorch
-```
-
-### GPU Support:
-```dockerfile
-# Dockerfile with GPU support
-FROM nvidia/cuda:11.8-runtime-ubuntu20.04
-
-# Install Python and AI libraries
-RUN apt-get update && apt-get install -y python3 python3-pip
-RUN pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118
-
-# Copy model and application
-COPY . /app
-WORKDIR /app
-
-CMD ["python3", "app.py"]
-```
-
-### Docker Compose for AI:
+### Docker Compose for ML Stack:
 ```yaml
 version: '3.8'
 services:
-  ai-model:
-    build: .
+  ollama:
+    image: ollama/ollama
     ports:
-      - "8000:8000"
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
     deploy:
       resources:
         reservations:
@@ -2809,41 +2821,159 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-
-  model-runner:
-    image: ollama/ollama
+  
+  ml-model:
+    build: .
     ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
+      - "8000:8000"
+    depends_on:
+      - ollama
     environment:
-      - OLLAMA_MODELS=/root/.ollama/models
+      - OLLAMA_HOST=ollama:11434
+      - CUDA_VISIBLE_DEVICES=0
+  
+  cagent:
+    build: ./cagent
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ollama
+      - ml-model
+    environment:
+      - MODEL_ENDPOINT=http://ml-model:8000
+      - OLLAMA_ENDPOINT=http://ollama:11434
 
 volumes:
-  ollama_data:
+  ollama:
 ```
 
-### Model Runners and Agents:
+### AI Model Runners:
 ```bash
-# Run Ollama model runner
-docker run -d -p 11434:11434 ollama/ollama
+# TensorFlow Serving
+docker run -p 8501:8501 --mount type=bind,source=/path/to/model,target=/models/my_model -e MODEL_NAME=my_model -t tensorflow/serving
 
-# Pull and run models
-docker exec ollama ollama pull llama2
-docker exec ollama ollama run llama2
+# PyTorch Serve
+docker run --rm -it -p 8080:8080 -p 8081:8081 pytorch/torchserve:latest torchserve --start --model-store model_store --models my_model=my_model.mar
 
-# Run with cAgent (Container Agent)
-docker run -d --name cagent \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  cagent/agent:latest
+# Hugging Face Transformers
+docker run -p 8000:8000 huggingface/transformers-pytorch-gpu
 ```
 
-## 8. How do you build Docker images for multiple platforms?
+### Best Practices:
+- Use multi-stage builds for model optimization
+- Implement health checks for model endpoints
+- Use volume mounts for large models
+- Optimize image size with minimal base images
+- Leverage GPU scheduling for resource efficiency
+- Implement model versioning and A/B testing
+
+## 8. How do you use Docker with modern development workflows and GitHub Actions?
 
 ### Answer:
-Docker's multi-platform build feature allows you to create images that work on different architectures (AMD64, ARM64, etc.).
+Docker integrates seamlessly with modern development practices and CI/CD tools.
 
-### Buildx for Multi-Platform:
+### Development Containers:
+```json
+// .devcontainer/devcontainer.json
+{
+  "name": "Node.js Development",
+  "image": "node:16",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode.vscode-typescript-next", "ms-azuretools.vscode-docker"]
+    }
+  },
+  "forwardPorts": [3000],
+  "postCreateCommand": "npm install"
+}
+```
+
+### Advanced GitHub Actions Integration:
+```yaml
+name: Docker CI/CD Pipeline
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build test image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: test
+          load: true
+          tags: myapp:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Run tests
+        run: docker run --rm myapp:test npm test
+      
+      - name: Security scan with Scout
+        run: docker scout cves myapp:test
+  
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            myregistry/myapp:latest
+            myregistry/myapp:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+```
+
+### Hot Reload Development:
+```yaml
+# docker-compose.dev.yml
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    command: npm run dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: package.json
+```
+
+### Multi-Platform Builds:
 ```bash
 # Create buildx builder
 docker buildx create --name multiplatform
@@ -2858,41 +2988,11 @@ docker buildx build --platform linux/amd64,linux/arm64 -t myapp:latest .
 docker buildx build --platform linux/amd64,linux/arm64 -t myapp:latest --push .
 ```
 
-### Dockerfile for Multi-Platform:
-```dockerfile
-FROM --platform=$BUILDPLATFORM node:16-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install --only=production
-COPY --from=builder /app/dist ./dist
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-### Platform-Specific Builds:
-```bash
-# Build for specific platform
-docker buildx build --platform linux/amd64 -t myapp:amd64 .
-
-# Build for ARM64
-docker buildx build --platform linux/arm64 -t myapp:arm64 .
-
-# Build for Windows
-docker buildx build --platform windows/amd64 -t myapp:windows .
-```
-
 ### Benefits:
 - **Cross-Platform**: Support multiple architectures
-- **Efficiency**: Single build process for multiple platforms
-- **Compatibility**: Works on different hardware
-- **Deployment**: Deploy to various environments
+- **CI/CD Integration**: Seamless pipeline integration
+- **Development Experience**: Consistent dev environments
+- **Automation**: Automated testing and deployment
 
 ## 4. What is Docker BuildKit and what advanced features does it provide?
 
@@ -3003,6 +3103,7 @@ Docker Build Cloud is a service that provides remote build capabilities with enh
 - **Shared Cache**: Team-wide build cache sharing
 - **Multi-Platform**: Native multi-architecture builds
 - **Performance**: Faster builds with optimized infrastructure
+- **Docker Offload**: Automatic workload distribution
 
 ### Usage:
 ```bash
@@ -3017,6 +3118,19 @@ docker buildx build --platform linux/amd64,linux/arm64 -t myapp .
 
 # Shared cache
 docker buildx build --cache-from type=registry,ref=myregistry/cache .
+
+# Docker Offload configuration
+docker buildx create --driver docker-container --driver-opt image=moby/buildkit:latest --use
+```
+
+### Docker Offload:
+```bash
+# Enable offload for resource-intensive builds
+docker buildx build --load --platform linux/amd64 .
+
+# Offload to remote builder
+docker context create remote --docker host=tcp://remote-host:2376
+docker buildx create --driver docker --driver-opt host=remote remote-builder
 ```
 
 ### Benefits:
@@ -3024,6 +3138,7 @@ docker buildx build --cache-from type=registry,ref=myregistry/cache .
 - **Scalability**: Handle large builds
 - **Collaboration**: Shared team resources
 - **Cost Efficiency**: Pay-per-use model
+- **Resource Optimization**: Offload heavy workloads
 
 ## 5. How do you use Docker with MCP (Model Context Protocol)?
 
