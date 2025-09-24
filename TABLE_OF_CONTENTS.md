@@ -18,8 +18,14 @@ This document provides a comprehensive overview of all Docker interview question
 - 8. How do you remove Docker containers and images?
 - 9. What is Docker Hub and how do you use it?
 - 10. Explain Docker networking modes.
+- 5. Explain Docker layers and how they work.
+- 6. What are Docker volumes and why are they important?
+- 7. What is the difference between docker run and docker start?
+- 8. How do you remove Docker containers and images?
+- 9. What is Docker Hub and how do you use it?
+- 10. Explain Docker networking modes.
 
-**Total Questions**: 10
+**Total Questions**: 16
 
 ## Docker Architecture
 
@@ -165,7 +171,7 @@ This document provides a comprehensive overview of all Docker interview question
 
 ## Summary
 
-**Total Questions**: 90
+**Total Questions**: 96
 **Categories**: 9
 **Difficulty Levels**: Beginner to Expert
 
