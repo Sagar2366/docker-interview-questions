@@ -1,0 +1,48 @@
+name: Update Table of Contents
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '*/README.md'
+      - 'examples/*.md'
+      - 'quick-reference/*.md'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '*/README.md'
+      - 'examples/*.md'
+      - 'quick-reference/*.md'
+
+jobs:
+  update-toc:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Generate Table of Contents
+      run: python3 generate-toc.py
+    
+    - name: Check for changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit changes
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add TABLE_OF_CONTENTS.md
+        git commit -m "Auto-update Table of Contents" || exit 0
+        git push

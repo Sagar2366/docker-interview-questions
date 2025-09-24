@@ -3,47 +3,313 @@
 ## 1. What are the main security concerns with Docker containers?
 
 ### Answer:
+Docker security involves multiple layers of protection, from the container runtime to the host system. Understanding these security concerns is crucial for production deployments.
+
+### Docker Security Model:
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    Docker Security Layers                                                          │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    │
+│  │                                Application Layer                                                           │    │
+│  │                                                                                                             │    │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │    │
+│  │  │   Container A   │    │   Container B   │    │   Container C   │    │   Container D   │                │    │
+│  │  │                 │    │                 │    │                 │    │                 │                │    │
+│  │  │ • App Code      │    │ • App Code      │    │ • App Code      │    │ • App Code      │                │    │
+│  │  │ • Dependencies  │    │ • Dependencies  │    │ • Dependencies  │    │ • Dependencies  │                │    │
+│  │  │ • Config        │    │ • Config        │    │ • Config        │    │ • Config        │                │    │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘                │    │
+│  └─────────────────────────────────────────────────────────────────────────────────────────────────────────┘    │
+│                                                    │                                                              │
+│                                          Security Boundaries                                                      │
+│                                                    │                                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    │
+│  │                              Container Runtime Layer                                                       │    │
+│  │                                                                                                             │    │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │    │
+│  │  │   Namespaces    │    │    cgroups      │    │  Capabilities   │    │    Seccomp     │                │    │
+│  │  │                 │    │                 │    │                 │    │                 │                │    │
+│  │  │ • PID           │    │ • CPU limits    │    │ • Drop privs    │    │ • Syscall       │                │    │
+│  │  │ • Network       │    │ • Memory limits │    │ • Minimal caps  │    │   filtering     │                │    │
+│  │  │ • Mount         │    │ • I/O limits    │    │ • No root       │    │ • Attack        │                │    │
+│  │  │ • IPC           │    │ • Device access │    │   access        │    │   prevention    │                │    │
+│  │  │ • UTS           │    │                 │    │                 │    │                 │                │    │
+│  │  │ • User          │    │                 │    │                 │    │                 │                │    │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘                │    │
+│  └─────────────────────────────────────────────────────────────────────────────────────────────────────────┘    │
+│                                                    │                                                              │
+│                                                    │                                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐    │
+│  │                                Host System Layer                                                           │    │
+│  │                                                                                                             │    │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │    │
+│  │  │   AppArmor/     │    │   File System   │    │    Network      │    │   Audit &       │                │    │
+│  │  │    SELinux      │    │    Security     │    │    Security     │    │   Monitoring    │                │    │
+│  │  │                 │    │                 │    │                 │    │                 │                │    │
+│  │  │ • MAC policies  │    │ • Read-only FS  │    │ • Firewall      │    │ • Log analysis  │                │    │
+│  │  │ • Profile       │    │ • Mount         │    │ • Network       │    │ • Intrusion     │                │    │
+│  │  │   enforcement   │    │   restrictions  │    │   segmentation  │    │   detection     │                │    │
+│  │  │ • Access        │    │ • Tmpfs for     │    │ • TLS           │    │ • Compliance    │                │    │
+│  │  │   control       │    │   secrets       │    │   encryption    │    │   monitoring    │                │    │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘                │    │
+│  └─────────────────────────────────────────────────────────────────────────────────────────────────────────┘    │
+│                                                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ### Primary Security Concerns:
 
-1. **Container Escape**
-   - Breaking out of container isolation
-   - Accessing host system resources
-   - Privilege escalation attacks
+#### **1. Container Escape Vulnerabilities**
+```
+Container Escape Attack Vectors:
 
-2. **Image Vulnerabilities**
-   - Base image security issues
-   - Outdated packages and dependencies
-   - Malicious images from untrusted sources
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                Host System                                                  │
+│                                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐    │
+│  │                            Container                                                │    │
+│  │                                                                                     │    │
+│  │  ┌─────────────────┐                                                              │    │
+│  │  │   Malicious     │  1. Kernel Exploits                                         │    │
+│  │  │   Application   │  ────────────────────────────────────────────────────────► │    │
+│  │  │                 │                                                              │    │
+│  │  └─────────────────┘  2. Privileged Container                                    │    │
+│  │           │            ────────────────────────────────────────────────────────► │    │
+│  │           │                                                                       │    │
+│  │           │            3. Capability Abuse                                       │    │
+│  │           │            ────────────────────────────────────────────────────────► │    │
+│  │           │                                                                       │    │
+│  │           │            4. Volume Mount Abuse                                     │    │
+│  │           └────────────────────────────────────────────────────────────────────► │    │
+│  │                                                                                     │    │
+│  └─────────────────────────────────────────────────────────────────────────────────┘    │
+│                                        │                                                   │
+│                                        │ Successful Escape                                 │
+│                                        ▼                                                   │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐    │
+│  │                        Host Access Gained                                          │    │
+│  │                                                                                     │    │
+│  │  • Full filesystem access                                                          │    │
+│  │  • Network access to other containers                                              │    │
+│  │  • Ability to modify host configuration                                            │    │
+│  │  • Access to sensitive host data                                                   │    │
+│  │  • Potential lateral movement                                                      │    │
+│  └─────────────────────────────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+```
 
-3. **Network Security**
-   - Unencrypted container communication
-   - Exposed ports and services
-   - Network isolation failures
-
-4. **Data Security**
-   - Sensitive data in images
-   - Insecure volume mounts
-   - Data leakage between containers
-
-5. **Runtime Security**
-   - Privileged containers
-   - Insecure container configurations
-   - Resource exhaustion attacks
-
-### Security Best Practices:
+**Prevention Strategies:**
 ```bash
-# Run containers as non-root user
+# Run as non-root user
 docker run --user 1000:1000 nginx
 
-# Limit container capabilities
+# Drop all capabilities
 docker run --cap-drop ALL --cap-add NET_BIND_SERVICE nginx
 
 # Use read-only filesystem
 docker run --read-only nginx
 
-# Limit container resources
-docker run --memory=512m --cpus=1.0 nginx
+# Apply security profiles
+docker run --security-opt seccomp=profile.json nginx
+```
+
+#### **2. Image Security Vulnerabilities**
+```
+Image Security Threat Model:
+
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                              Image Supply Chain                                            │
+│                                                                                             │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐ │
+│  │   Base Image    │    │   Dependencies  │    │   Application   │    │   Final Image   │ │
+│  │                 │    │                 │    │     Code        │    │                 │ │
+│  │ • OS packages   │    │ • Libraries     │    │ • Source code   │    │ • Layered       │ │
+│  │ • System libs   │    │ • Frameworks    │    │ • Binaries      │    │   filesystem    │ │
+│  │ • CVEs          │    │ • Transitive    │    │ • Config files  │    │ • Metadata      │ │
+│  │ • Backdoors     │    │   deps          │    │ • Secrets       │    │ • Signatures    │ │
+│  └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘ │
+│           │                       │                       │                       │        │
+│           ▼                       ▼                       ▼                       ▼        │
+│  ┌─────────────────────────────────────────────────────────────────────────────────────┐ │
+│  │                            Vulnerability Sources                                       │ │
+│  │                                                                                         │ │
+│  │  • Known CVEs in base OS                    • Malicious packages                      │ │
+│  │  • Outdated system packages                 • Supply chain attacks                    │ │
+│  │  • Vulnerable application dependencies      • Embedded secrets/credentials            │ │
+│  │  • Misconfigurations                        • Unsigned or tampered images             │ │
+│  │  • Excessive privileges                      • Trojan horse applications               │ │
+│  └─────────────────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Mitigation Strategies:**
+```bash
+# Use minimal base images
+FROM alpine:latest  # Instead of ubuntu:latest
+
+# Scan images for vulnerabilities
+docker scan myimage:latest
+trivy image myimage:latest
+
+# Use multi-stage builds
+FROM node:16 AS builder
+# ... build steps
+FROM alpine:latest
+COPY --from=builder /app/dist /app
+
+# Sign and verify images
+docker trust sign myimage:latest
+DOCKER_CONTENT_TRUST=1 docker pull myimage:latest
+```
+
+#### **3. Runtime Security Threats**
+```
+Runtime Attack Surface:
+
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                Container Runtime                                            │
+│                                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐    │
+│  │                              Attack Vectors                                        │    │
+│  │                                                                                     │    │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐              │    │
+│  │  │   Privileged    │    │   Resource      │    │   Network       │              │    │
+│  │  │   Containers    │    │   Exhaustion    │    │   Attacks       │              │    │
+│  │  │                 │    │                 │    │                 │              │    │
+│  │  │ • --privileged  │    │ • CPU bombing   │    │ • Port scanning │              │    │
+│  │  │ • Host PID      │    │ • Memory leaks  │    │ • ARP spoofing  │              │    │
+│  │  │ • Host network  │    │ • Disk filling  │    │ • DNS poisoning │              │    │
+│  │  │ • Volume mounts │    │ • Fork bombs    │    │ • MITM attacks  │              │    │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘              │    │
+│  │                                                                                     │    │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐              │    │
+│  │  │   Data          │    │   Lateral       │    │   Host          │              │    │
+│  │  │   Exfiltration  │    │   Movement      │    │   Compromise    │              │    │
+│  │  │                 │    │                 │    │                 │              │    │
+│  │  │ • Volume access │    │ • Container     │    │ • Daemon        │              │    │
+│  │  │ • Network       │    │   hopping       │    │   exploitation  │              │    │
+│  │  │   sniffing      │    │ • Shared        │    │ • Kernel        │              │    │
+│  │  │ • Log access    │    │   resources     │    │   vulnerabilities│              │    │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘              │    │
+│  └─────────────────────────────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Runtime Security Controls:**
+```bash
+# Resource limits
+docker run --memory=512m --cpus=1.0 --pids-limit=100 nginx
+
+# Network isolation
+docker network create --internal secure-net
+docker run --network secure-net nginx
+
+# Security profiles
+docker run --security-opt apparmor=docker-default nginx
+docker run --security-opt seccomp=default nginx
+
+# No new privileges
+docker run --security-opt no-new-privileges nginx
+```
+
+### Comprehensive Security Best Practices:
+
+#### **1. Defense in Depth Strategy:**
+```bash
+# Multi-layered security approach
+docker run -d \
+  --name secure-app \
+  --user 1000:1000 \
+  --cap-drop ALL \
+  --cap-add NET_BIND_SERVICE \
+  --read-only \
+  --tmpfs /tmp \
+  --memory=512m \
+  --cpus=1.0 \
+  --pids-limit=100 \
+  --security-opt no-new-privileges \
+  --security-opt seccomp=default \
+  --security-opt apparmor=docker-default \
+  --network custom-network \
+  myapp:latest
+```
+
+#### **2. Image Security Scanning:**
+```bash
+# Vulnerability scanning pipeline
+docker build -t myapp:latest .
+docker scan myapp:latest
+trivy image myapp:latest
+grype myapp:latest
+
+# Fail build on high/critical vulnerabilities
+docker scan --severity high myapp:latest || exit 1
+```
+
+#### **3. Runtime Monitoring:**
+```bash
+# Container behavior monitoring
+docker exec container_name ps aux
+docker exec container_name netstat -tlnp
+docker exec container_name lsof -i
+
+# Resource monitoring
+docker stats --no-stream
+docker system events --filter container=myapp
+```
+
+#### **4. Secrets Management:**
+```bash
+# Docker secrets (Swarm mode)
+echo "mysecret" | docker secret create app_secret -
+docker service create --secret app_secret myapp
+
+# External secrets management
+docker run -e VAULT_ADDR=https://vault.example.com myapp
+```
+
+### Security Compliance and Standards:
+
+#### **CIS Docker Benchmark:**
+```bash
+# Run CIS Docker Benchmark
+docker run --rm --net host --pid host --userns host \
+  --cap-add audit_control \
+  -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
+  -v /etc:/etc:ro \
+  -v /var/lib:/var/lib:ro \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  --label docker_bench_security \
+  docker/docker-bench-security
+```
+
+#### **Security Policies:**
+```yaml
+# Pod Security Policy example
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: restricted
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    - ALL
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  seLinux:
+    rule: 'RunAsAny'
+  fsGroup:
+    rule: 'RunAsAny'
 ```
 
 ## 2. How do you secure Docker images and what is image scanning?

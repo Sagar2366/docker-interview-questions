@@ -1,6 +1,11 @@
 # Docker Interview Questions for DevOps/SRE Engineers
 
-A comprehensive collection of Docker interview questions, answers, and practical examples for DevOps and Site Reliability Engineering roles.
+[![GitHub stars](https://img.shields.io/github/stars/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/network)
+[![GitHub issues](https://img.shields.io/github/issues/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/issues)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A comprehensive collection of **90+ Docker interview questions**, answers, and practical examples for DevOps and Site Reliability Engineering roles.
 
 ## Table of Contents
 
@@ -25,7 +30,7 @@ This repository is designed for:
 - Cloud Engineers
 - Anyone preparing for Docker-related interviews
 
-## 📖 How to Use This Repository
+## How to Use This Repository
 
 1. **Study by Category**: Each folder contains questions organized by topic
 2. **Practice with Examples**: Run the provided Docker commands and examples
@@ -36,7 +41,7 @@ This repository is designed for:
 
 ```bash
 # Clone this repository
-git clone <repository-url>
+git clone https://github.com/Sagar2366/docker-interview-questions.git
 cd docker-interview-questions
 
 # Explore the questions by category
@@ -69,10 +74,38 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Repository Stats
+
+- **90+ Interview Questions** across 8 categories
+- **100+ Code Examples** with practical demonstrations
+- **10+ Dockerfile Templates** for different technologies
+- **Real-world Scenarios** for troubleshooting practice
+- **Latest Docker Features** including AI integration
+
+## Quick Navigation
+
+| Category | Questions | Difficulty |
+|----------|-----------|------------|
+| [Basic Concepts](basic-concepts/) | 10 | Beginner |
+| [Docker Architecture](docker-architecture/) | 10 | Intermediate |
+| [Docker Networking](docker-networking/) | 10 | Intermediate |
+| [Docker Security](docker-security/) | 10 | Advanced |
+| [Docker Compose](docker-compose/) | 10 | Intermediate |
+| [Dockerfile Best Practices](dockerfile-best-practices/) | 10 | Advanced |
+| [Latest Features](latest-features/) | 10 | Advanced |
+| [Advanced Topics](advanced-topics/) | 10 | Expert |
+| [Practical Scenarios](practical-scenarios/) | 10 | All Levels |
+
 ## ⭐ Star This Repository
 
 If you find this helpful, please give it a star! It helps others discover this resource.
 
+## Connect & Support
+
+- **GitHub**: [Sagar2366](https://github.com/Sagar2366)
+- **Issues**: [Report bugs or request features](https://github.com/Sagar2366/docker-interview-questions/issues)
+- **Discussions**: [Join the community](https://github.com/Sagar2366/docker-interview-questions/discussions)
+
 ---
 
-**Happy Learning! **
+**Happy Learning! 🐳**

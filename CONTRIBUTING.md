@@ -258,7 +258,7 @@ Contributors will be recognized in:
 - Individual question credits
 - Release notes
 
-## 📞 Contact
+## Contact
 
 - **GitHub Issues**: For questions and discussions
 - **Pull Requests**: For code and content contributions
