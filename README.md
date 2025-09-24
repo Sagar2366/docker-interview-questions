@@ -44,17 +44,11 @@ This repository is designed for:
 git clone https://github.com/Sagar2366/docker-interview-questions.git
 cd docker-interview-questions
 
-# Explore the questions by category
-ls -la
+# View all questions in one comprehensive file
+cat DOCKER_INTERVIEW_QUESTIONS.md
 
-# Start with basic concepts
-cat basic-concepts/README.md
-
-# Explore latest Docker features
-cat latest-features/README.md
-
-# Check Dockerfile best practices
-cat dockerfile-best-practices/README.md
+# Or open in your favorite editor
+code DOCKER_INTERVIEW_QUESTIONS.md
 ```
 
 ## Question Format
@@ -84,17 +78,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Quick Navigation
 
+All questions are now consolidated in **[DOCKER_INTERVIEW_QUESTIONS.md](DOCKER_INTERVIEW_QUESTIONS.md)**
+
 | Category | Questions | Difficulty |
 |----------|-----------|------------|
-| [Basic Concepts](basic-concepts/) | 10 | Beginner |
-| [Docker Architecture](docker-architecture/) | 10 | Intermediate |
-| [Docker Networking](docker-networking/) | 10 | Intermediate |
-| [Docker Security](docker-security/) | 10 | Advanced |
-| [Docker Compose](docker-compose/) | 10 | Intermediate |
-| [Dockerfile Best Practices](dockerfile-best-practices/) | 10 | Advanced |
-| [Latest Features](latest-features/) | 10 | Advanced |
-| [Advanced Topics](advanced-topics/) | 10 | Expert |
-| [Practical Scenarios](practical-scenarios/) | 10 | All Levels |
+| Basic Concepts | 10 | Beginner |
+| Docker Architecture | 10 | Intermediate |
+| Docker Networking | 10 | Intermediate |
+| Docker Security | 10 | Advanced |
+| Docker Compose | 10 | Intermediate |
+| Dockerfile Best Practices | 10 | Advanced |
+| Latest Features | 5 | Advanced |
+| Advanced Topics | 5 | Expert |
+| Practical Scenarios | 5 | All Levels |
 
 ## ⭐ Star This Repository
 
