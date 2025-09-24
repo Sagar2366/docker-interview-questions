@@ -127,7 +127,7 @@ docker run -d nginx
 - What are the security implications?
 ```
 
-## 💻 Code Examples
+## Code Examples
 
 ### Code Quality Standards
 - **Syntax**: Use correct syntax and formatting
