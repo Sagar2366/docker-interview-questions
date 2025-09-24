@@ -279,6 +279,28 @@ docker run --rm -v mydata:/data -v $(pwd):/backup ubuntu tar xzf /backup/backup.
 ### Answer:
 Docker images are built from Dockerfiles using the `docker build` command. The build process creates layers for each instruction.
 
+### Complete Dockerfile Instructions Reference:
+
+| Instruction | Purpose | Example | Notes |
+|-------------|---------|---------|-------|
+| **FROM** | Base image | `FROM node:16-alpine` | Must be first instruction |
+| **WORKDIR** | Set working directory | `WORKDIR /app` | Creates directory if not exists |
+| **COPY** | Copy files from host | `COPY . /app` | Preserves file permissions |
+| **ADD** | Copy files with extraction | `ADD archive.tar.gz /app` | Can extract archives, download URLs |
+| **RUN** | Execute commands | `RUN npm install` | Creates new layer |
+| **CMD** | Default command | `CMD ["npm", "start"]` | Can be overridden |
+| **ENTRYPOINT** | Fixed command | `ENTRYPOINT ["python", "app.py"]` | Cannot be overridden |
+| **EXPOSE** | Document ports | `EXPOSE 3000` | Metadata only |
+| **ENV** | Environment variables | `ENV NODE_ENV=production` | Available at build and runtime |
+| **ARG** | Build arguments | `ARG VERSION=1.0` | Only available at build time |
+| **VOLUME** | Mount points | `VOLUME ["/data"]` | Creates mount point |
+| **USER** | Set user context | `USER 1000:1000` | Security best practice |
+| **LABEL** | Add metadata | `LABEL version="1.0"` | Key-value pairs |
+| **HEALTHCHECK** | Health monitoring | `HEALTHCHECK CMD curl -f http://localhost/` | Container health status |
+| **SHELL** | Default shell | `SHELL ["/bin/bash", "-c"]` | Changes default shell |
+| **STOPSIGNAL** | Stop signal | `STOPSIGNAL SIGTERM` | Signal to stop container |
+| **ONBUILD** | Trigger instructions | `ONBUILD COPY . /app` | Executes when used as base |
+
 ### Basic Dockerfile:
 ```dockerfile
 FROM node:16-alpine
@@ -287,6 +309,57 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### Advanced Dockerfile Example:
+```dockerfile
+# syntax=docker/dockerfile:1
+FROM node:16-alpine AS base
+
+# Build arguments
+ARG NODE_ENV=production
+ARG PORT=3000
+
+# Environment variables
+ENV NODE_ENV=$NODE_ENV
+ENV PORT=$PORT
+
+# Labels
+LABEL maintainer="developer@example.com"
+LABEL version="1.0"
+LABEL description="Node.js application"
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY --chown=nextjs:nodejs package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy application code
+COPY --chown=nextjs:nodejs . .
+
+# Create volume
+VOLUME ["/app/data"]
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE $PORT
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:$PORT/health || exit 1
+
+# Default command
 CMD ["npm", "start"]
 ```
 
@@ -3180,34 +3253,30 @@ services:
 - **Automation**: AI-powered workflows
 - **Context Awareness**: Understanding of application state
 
-## 6. What is Docker Hub Insights (DHI) and how does it help?
+## 6. What are Docker Hardened Images (DHI) and how do they enhance security?
 
 ### Answer:
-Docker Hub Insights provides analytics and insights for Docker Hub repositories and image usage.
+Docker Hardened Images (DHI) are security-focused base images with minimal attack surface and regular security updates.
 
 ### Key Features:
-- **Usage Analytics**: Download statistics and trends
-- **Security Insights**: Vulnerability reports
-- **Performance Metrics**: Image performance data
-- **Repository Management**: Advanced repository controls
+- **Security-First**: Minimal attack surface with security patches
+- **Compliance**: Meets enterprise security standards
+- **Vulnerability-Free**: Regular security updates and scanning
+- **Production-Ready**: Optimized for production workloads
 
 ### Usage:
-```bash
-# View repository insights
-docker hub insights myrepo
-
-# Security scan results
-docker hub security myrepo:latest
-
-# Usage statistics
-docker hub stats myrepo
+```dockerfile
+# Use hardened base images
+FROM docker.io/library/ubuntu:22.04-hardened
+FROM docker.io/library/nginx:alpine-hardened
+FROM docker.io/library/node:18-alpine-hardened
 ```
 
 ### Benefits:
-- **Visibility**: Understanding image usage
-- **Security**: Proactive vulnerability management
-- **Optimization**: Performance improvements
-- **Compliance**: Audit trails and reporting
+- **Reduced Attack Surface**: Minimal packages and services
+- **Regular Updates**: Automated security patching
+- **Compliance**: Meets security standards
+- **Performance**: Optimized for production use
 
 ## 6. How do you implement container image signing and verification?
 
