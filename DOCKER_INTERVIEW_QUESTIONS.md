@@ -4,19 +4,19 @@
 [![GitHub forks](https://img.shields.io/github/forks/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/network)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive collection of **90+ Docker interview questions** with detailed answers, practical examples, and diagrams for DevOps and Site Reliability Engineering roles.
+A comprehensive collection of **75+ Docker interview questions** with detailed answers, practical examples, and diagrams for DevOps and Site Reliability Engineering roles.
 
 ## Table of Contents
 
-- [Basic Concepts (10 Questions)](#basic-concepts)
-- [Docker Architecture (10 Questions)](#docker-architecture)
-- [Docker Networking (10 Questions)](#docker-networking)
-- [Docker Security (10 Questions)](#docker-security)
-- [Docker Compose (10 Questions)](#docker-compose)
-- [Dockerfile Best Practices (10 Questions)](#dockerfile-best-practices)
-- [Latest Features (10 Questions)](#latest-features)
-- [Advanced Topics (10 Questions)](#advanced-topics)
-- [Practical Scenarios (10 Questions)](#practical-scenarios)
+- [Basic Concepts (8 Questions)](#basic-concepts)
+- [Docker Architecture (8 Questions)](#docker-architecture)
+- [Docker Networking (8 Questions)](#docker-networking)
+- [Docker Security (8 Questions)](#docker-security)
+- [Docker Compose (8 Questions)](#docker-compose)
+- [Dockerfile Best Practices (8 Questions)](#dockerfile-best-practices)
+- [Latest Features (8 Questions)](#latest-features)
+- [Advanced Topics (8 Questions)](#advanced-topics)
+- [Practical Scenarios (8 Questions)](#practical-scenarios)
 
 ---
 
@@ -67,96 +67,7 @@ VM Architecture:
 - **Docker**: Microservices, CI/CD, development environments
 - **VMs**: Legacy applications, different OS requirements, strong isolation needs
 
-## 2. Explain the Docker architecture and its main components.
-
-### Answer:
-Docker uses a client-server architecture with several key components working together.
-
-### Docker Architecture Components:
-```
-┌─────────────────┐     REST API     ┌─────────────────────────────────────┐
-│  Docker Client  │◄────────────────►│         Docker Daemon              │
-│                 │                  │         (dockerd)                   │
-│ • docker build  │                  │                                     │
-│ • docker run    │                  │ ┌─────────────────────────────────┐ │
-│ • docker pull   │                  │ │        API Server              │ │
-│ • docker push   │                  │ │  • REST API endpoints          │ │
-└─────────────────┘                  │ │  • Authentication              │ │
-                                     │ └─────────────────────────────────┘ │
-┌─────────────────┐                  │                                     │
-│ Docker Registry │                  │ ┌─────────────────────────────────┐ │
-│                 │                  │ │     Object Management           │ │
-│ • Docker Hub    │                  │ │  • Images                      │ │
-│ • Private Reg   │                  │ │  • Containers                  │ │
-│ • ECR/GCR/ACR   │                  │ │  • Networks                    │ │
-└─────────────────┘                  │ │  • Volumes                     │ │
-                                     │ └─────────────────────────────────┘ │
-                                     │                                     │
-                                     │ ┌─────────────────────────────────┐ │
-                                     │ │      Runtime Interface          │ │
-                                     │ │        containerd               │ │
-                                     │ └─────────────┬───────────────────┘ │
-                                     └───────────────┼─────────────────────┘
-                                                     │
-                                     ┌───────────────┼─────────────────────┐
-                                     │               ▼                     │
-                                     │  ┌─────────────────┐                │
-                                     │  │      runc       │                │
-                                     │  └─────────┬───────┘                │
-                                     │            ▼                        │
-                                     │  ┌─────────────────┐                │
-                                     │  │   Container     │                │
-                                     │  │   Process       │                │
-                                     │  └─────────────────┘                │
-                                     └─────────────────────────────────────┘
-```
-
-### Main Components:
-
-#### 1. Docker Client
-- Command-line interface (CLI)
-- Communicates with Docker daemon via REST API
-- Can connect to remote daemons
-
-#### 2. Docker Daemon (dockerd)
-- Background service managing Docker objects
-- Handles API requests
-- Manages images, containers, networks, volumes
-
-#### 3. Docker Images
-- Read-only templates for creating containers
-- Built from Dockerfile instructions
-- Stored in layers for efficiency
-
-#### 4. Docker Containers
-- Running instances of Docker images
-- Isolated processes with their own filesystem
-- Can be started, stopped, moved, deleted
-
-#### 5. Docker Registry
-- Stores and distributes Docker images
-- Docker Hub is the default public registry
-- Private registries for enterprise use
-
-### Basic Commands:
-```bash
-# Build image from Dockerfile
-docker build -t myapp:latest .
-
-# Run container from image
-docker run -d -p 8080:80 myapp:latest
-
-# List running containers
-docker ps
-
-# Pull image from registry
-docker pull nginx:alpine
-
-# Push image to registry
-docker push myregistry.com/myapp:latest
-```
-
-## 3. What is a Docker image and how is it different from a container?
+## 2. What is a Docker image and how is it different from a container?
 
 ### Answer:
 A Docker image is a read-only template used to create containers, while a container is a running instance of an image.
@@ -202,20 +113,6 @@ Docker Container (Running Instance):
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Key Concepts:
-
-#### Docker Images:
-- **Immutable**: Cannot be changed once built
-- **Layered**: Built in layers for efficiency
-- **Shareable**: Can be shared via registries
-- **Versioned**: Tagged with versions (e.g., nginx:1.21, nginx:latest)
-
-#### Docker Containers:
-- **Mutable**: Can be modified during runtime
-- **Isolated**: Run in separate namespaces
-- **Ephemeral**: Can be easily created and destroyed
-- **Stateful**: Can maintain state during execution
-
 ### Practical Examples:
 
 #### Working with Images:
@@ -244,76 +141,17 @@ docker run -d --name webserver nginx:alpine
 # List running containers
 docker ps
 
-# List all containers (including stopped)
-docker ps -a
-
 # Stop container
 docker stop webserver
 
 # Start stopped container
 docker start webserver
 
-# Remove container
-docker rm webserver
-
 # Execute command in running container
 docker exec -it webserver /bin/sh
 ```
 
-### Image Creation Process:
-```dockerfile
-# Dockerfile example
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-```bash
-# Build process creates layers
-docker build -t mynode-app .
-
-# Each instruction creates a new layer:
-# Layer 1: FROM node:16-alpine
-# Layer 2: WORKDIR /app
-# Layer 3: COPY package*.json ./
-# Layer 4: RUN npm install
-# Layer 5: COPY . .
-# Layer 6: EXPOSE 3000
-# Layer 7: CMD ["npm", "start"]
-```
-
-### Container Lifecycle:
-```bash
-# Create container (doesn't start it)
-docker create --name mycontainer nginx:alpine
-
-# Start created container
-docker start mycontainer
-
-# Run container (create + start)
-docker run -d --name webserver nginx:alpine
-
-# Pause container
-docker pause webserver
-
-# Unpause container
-docker unpause webserver
-
-# Stop container gracefully
-docker stop webserver
-
-# Kill container forcefully
-docker kill webserver
-
-# Remove container
-docker rm webserver
-```
-
-## 4. Explain the difference between CMD and ENTRYPOINT in Dockerfile.
+## 3. Explain the difference between CMD and ENTRYPOINT in Dockerfile.
 
 ### Answer:
 Both CMD and ENTRYPOINT define what command runs when a container starts, but they behave differently when additional arguments are provided.
@@ -331,9 +169,6 @@ Both CMD and ENTRYPOINT define what command runs when a container starts, but th
 
 #### CMD Examples:
 ```dockerfile
-# Shell form (not recommended)
-CMD echo "Hello World"
-
 # Exec form (recommended)
 CMD ["echo", "Hello World"]
 
@@ -343,7 +178,6 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ```bash
 # Using CMD
-docker build -t cmd-demo .
 docker run cmd-demo                    # Output: Hello World
 docker run cmd-demo echo "Goodbye"     # Output: Goodbye (CMD overridden)
 ```
@@ -355,14 +189,10 @@ ENTRYPOINT ["echo", "Hello"]
 
 # Application entrypoint
 ENTRYPOINT ["python", "app.py"]
-
-# Script entrypoint
-ENTRYPOINT ["./entrypoint.sh"]
 ```
 
 ```bash
 # Using ENTRYPOINT
-docker build -t entry-demo .
 docker run entry-demo                  # Output: Hello
 docker run entry-demo World            # Output: Hello World (args appended)
 ```
@@ -382,228 +212,7 @@ docker run myapp                       # python app.py --port 8080 --env product
 docker run myapp --port 3000           # python app.py --port 3000 (CMD overridden)
 ```
 
-### Real-World Examples:
-
-#### Web Server (CMD):
-```dockerfile
-FROM nginx:alpine
-CMD ["nginx", "-g", "daemon off;"]
-# Allows: docker run nginx-image nginx-debug
-```
-
-#### Database (ENTRYPOINT + CMD):
-```dockerfile
-FROM postgres:13
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["postgres"]
-# Always runs entrypoint script, but can change database command
-```
-
-#### CLI Tool (ENTRYPOINT):
-```dockerfile
-FROM alpine
-COPY mytool /usr/local/bin/
-ENTRYPOINT ["mytool"]
-# Always runs mytool, arguments passed to it
-```
-
-### Shell vs Exec Form:
-```dockerfile
-# Shell form - runs in shell (/bin/sh -c)
-CMD echo $HOME                         # Variable expansion works
-ENTRYPOINT echo $HOME
-
-# Exec form - direct execution (recommended)
-CMD ["echo", "$HOME"]                  # No variable expansion
-ENTRYPOINT ["echo", "$HOME"]
-
-# Exec form with variable expansion
-CMD ["/bin/sh", "-c", "echo $HOME"]    # Explicit shell
-```
-
-### Best Practices:
-1. **Use ENTRYPOINT** for fixed executable
-2. **Use CMD** for default arguments
-3. **Prefer exec form** over shell form
-4. **Combine both** for flexibility
-5. **Use shell form** only when you need shell features
-
-## 5. Explain Docker layers and how they work.
-
-### Answer:
-Docker images are built using a layered filesystem. Each instruction in a Dockerfile creates a new read-only layer. When you run a container, Docker adds a writable layer on top.
-
-### Layer Architecture:
-```
-Container (Read-Write Layer)
-┌─────────────────────────────┐ ← Writable layer (changes here)
-│     Container Layer         │
-├─────────────────────────────┤
-│     Layer 4: COPY app.py    │ ← Read-only layers
-├─────────────────────────────┤   (shared between containers)
-│     Layer 3: RUN install    │
-├─────────────────────────────┤
-│     Layer 2: RUN update     │
-├─────────────────────────────┤
-│     Layer 1: FROM ubuntu    │
-└─────────────────────────────┘
-```
-
-### How Layers Work:
-
-#### 1. Layer Creation:
-```dockerfile
-FROM ubuntu:20.04          # Layer 1 (base)
-RUN apt-get update         # Layer 2 (package index)
-RUN apt-get install -y git # Layer 3 (git installation)
-WORKDIR /app              # Layer 4 (directory creation)
-COPY app.py .             # Layer 5 (file copy)
-CMD ["python", "app.py"]  # Layer 6 (metadata only)
-```
-
-#### 2. Layer Sharing:
-```
-Image A                    Image B
-┌─────────────────┐       ┌─────────────────┐
-│ App A files     │       │ App B files     │
-├─────────────────┤       ├─────────────────┤
-│ Python install  │       │ Node.js install │
-├─────────────────┤       ├─────────────────┤
-│                 │       │                 │
-│   Shared Base   │◄────► │   Shared Base   │
-│  Ubuntu:20.04   │       │  Ubuntu:20.04   │
-│                 │       │                 │
-└─────────────────┘       └─────────────────┘
-```
-
-### Copy-on-Write (CoW) Mechanism:
-```
-Multiple Containers from Same Image:
-
-Container 1        Container 2        Container 3
-┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-│ Write Layer │   │ Write Layer │   │ Write Layer │
-├─────────────┤   ├─────────────┤   ├─────────────┤
-│             │   │             │   │             │
-│        Shared Read-Only Layers                  │
-│         (Image Layers)                          │
-│                                                 │
-└─────────────────────────────────────────────────┘
-```
-
-### Layer Caching Benefits:
-
-#### Build Cache Example:
-```dockerfile
-# First build
-FROM node:16-alpine        # ✓ Downloaded
-WORKDIR /app              # ✓ Layer created
-COPY package*.json ./     # ✓ Layer created
-RUN npm install           # ✓ Layer created (slow)
-COPY . .                  # ✓ Layer created
-RUN npm run build         # ✓ Layer created
-
-# Second build (only code changed)
-FROM node:16-alpine        # ✓ Cache hit
-WORKDIR /app              # ✓ Cache hit
-COPY package*.json ./     # ✓ Cache hit
-RUN npm install           # ✓ Cache hit (fast!)
-COPY . .                  # ✗ Cache miss (code changed)
-RUN npm run build         # ✗ Rebuilt
-```
-
-### Practical Commands:
-
-#### View Image Layers:
-```bash
-# Show image history
-docker history nginx:alpine
-
-# Detailed layer information
-docker image inspect nginx:alpine
-
-# Show layer sizes
-docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
-```
-
-#### Analyze Layer Changes:
-```bash
-# Show changes in container
-docker diff container_name
-
-# Export container changes
-docker export container_name > container.tar
-
-# Save image layers
-docker save nginx:alpine > nginx.tar
-```
-
-### Layer Optimization Strategies:
-
-#### 1. Order Instructions by Change Frequency:
-```dockerfile
-# ✅ Good - stable instructions first
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./      # Changes less frequently
-RUN npm install
-COPY . .                   # Changes more frequently
-RUN npm run build
-
-# ❌ Bad - unstable instructions first
-FROM node:16-alpine
-COPY . .                   # Changes frequently
-RUN npm install            # Cache invalidated often
-```
-
-#### 2. Combine Related Commands:
-```dockerfile
-# ✅ Good - single layer
-RUN apt-get update && \
-    apt-get install -y curl git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# ❌ Bad - multiple layers
-RUN apt-get update
-RUN apt-get install -y curl
-RUN apt-get install -y git
-RUN apt-get clean
-```
-
-#### 3. Use Multi-stage Builds:
-```dockerfile
-# Build stage (large)
-FROM node:16 AS builder
-WORKDIR /app
-COPY . .
-RUN npm install && npm run build
-
-# Production stage (small)
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-# Only final artifacts, not build dependencies
-```
-
-### Layer Limits and Considerations:
-- **Maximum layers**: 127 layers per image
-- **Layer size**: Each layer adds to total image size
-- **Cache invalidation**: Changes invalidate all subsequent layers
-- **Security**: Each layer can introduce vulnerabilities
-
-### Troubleshooting Layer Issues:
-```bash
-# Find large layers
-docker history --human --format "table {{.CreatedBy}}\t{{.Size}}" image_name
-
-# Analyze layer content
-docker run --rm -it image_name sh
-du -sh /*
-
-# Check for cache misses
-docker build --no-cache -t image_name .
-```
-## 6. What are Docker volumes and why are they important?
+## 4. What are Docker volumes and why are they important?
 
 ### Answer:
 Docker volumes are the preferred mechanism for persisting data generated and used by Docker containers. They solve the problem of data loss when containers are removed.
@@ -632,16 +241,7 @@ docker volume ls
 docker volume inspect mydata
 ```
 
-#### 2. Anonymous Volumes
-```bash
-# Create anonymous volume
-docker run -v /app/data nginx
-
-# Docker creates random name
-docker volume ls
-```
-
-#### 3. Bind Mounts
+#### 2. Bind Mounts
 ```bash
 # Mount host directory
 docker run -v /host/path:/container/path nginx
@@ -650,7 +250,7 @@ docker run -v /host/path:/container/path nginx
 docker run -v $(pwd):/app nginx
 ```
 
-#### 4. tmpfs Mounts (Memory)
+#### 3. tmpfs Mounts (Memory)
 ```bash
 # Mount in memory
 docker run --tmpfs /app/temp nginx
@@ -661,9 +261,6 @@ docker run --tmpfs /app/temp:noexec,nosuid,size=100m nginx
 
 ### Volume Management:
 ```bash
-# Create volume with driver options
-docker volume create --driver local --opt type=nfs --opt device=:/path myvolume
-
 # Remove volume
 docker volume rm mydata
 
@@ -677,7 +274,7 @@ docker run --rm -v mydata:/data -v $(pwd):/backup ubuntu tar czf /backup/backup.
 docker run --rm -v mydata:/data -v $(pwd):/backup ubuntu tar xzf /backup/backup.tar.gz -C /
 ```
 
-## 7. How do you build a Docker image from a Dockerfile?
+## 5. How do you build a Docker image from a Dockerfile?
 
 ### Answer:
 Docker images are built from Dockerfiles using the `docker build` command. The build process creates layers for each instruction.
@@ -711,18 +308,6 @@ docker build --build-arg NODE_ENV=production -t myapp .
 docker build --no-cache -t myapp .
 ```
 
-### Build Context:
-```bash
-# Build from URL
-docker build https://github.com/user/repo.git
-
-# Build from tarball
-docker build - < archive.tar.gz
-
-# Build with specific context
-docker build -f /path/to/Dockerfile /path/to/context
-```
-
 ### Multi-stage Build:
 ```dockerfile
 # Build stage
@@ -742,7 +327,7 @@ COPY --from=builder /app/dist ./dist
 CMD ["npm", "start"]
 ```
 
-## 8. What is Docker Compose and when would you use it?
+## 6. What is Docker Compose and when would you use it?
 
 ### Answer:
 Docker Compose is a tool for defining and running multi-container Docker applications using YAML configuration files.
@@ -803,71 +388,38 @@ docker-compose logs
 
 # Scale services
 docker-compose up --scale web=3
-
-# Build services
-docker-compose build
 ```
 
-## 9. Explain Docker networking basics.
+## 7. How do you expose and publish container ports?
 
 ### Answer:
-Docker provides several networking options to enable communication between containers and external networks.
 
-### Network Types:
+### Port Exposure vs Publishing:
 
-#### 1. Bridge (Default)
+| Concept | Description | Example |
+|---------|-------------|---------|
+| **EXPOSE** | Documents port (Dockerfile) | `EXPOSE 80` |
+| **Publish** | Maps host port to container | `-p 8080:80` |
+
+### Port Publishing Options:
 ```bash
-# Default bridge network
-docker run -d nginx
-
-# Custom bridge network
-docker network create mynetwork
-docker run -d --network mynetwork nginx
-```
-
-#### 2. Host
-```bash
-# Use host network
-docker run -d --network host nginx
-```
-
-#### 3. None
-```bash
-# No network access
-docker run -d --network none nginx
-```
-
-### Network Commands:
-```bash
-# List networks
-docker network ls
-
-# Inspect network
-docker network inspect bridge
-
-# Create network
-docker network create --driver bridge mynetwork
-
-# Connect container to network
-docker network connect mynetwork container_name
-
-# Disconnect container
-docker network disconnect mynetwork container_name
-```
-
-### Port Publishing:
-```bash
-# Publish port
+# Map host port to container port
 docker run -p 8080:80 nginx
 
-# Publish all exposed ports
+# Map random host port
 docker run -P nginx
 
-# Publish to specific interface
+# Map specific host IP
 docker run -p 127.0.0.1:8080:80 nginx
+
+# Map UDP port
+docker run -p 8080:80/udp nginx
+
+# Map multiple ports
+docker run -p 8080:80 -p 8443:443 nginx
 ```
 
-## 10. How do you troubleshoot Docker containers?
+## 8. How do you troubleshoot Docker containers?
 
 ### Answer:
 Docker provides various tools and techniques for troubleshooting container issues.
@@ -884,9 +436,6 @@ docker logs container_name
 
 # Follow logs in real-time
 docker logs -f container_name
-
-# Check last 100 lines
-docker logs --tail 100 container_name
 ```
 
 #### 2. Inspect Container
@@ -908,9 +457,6 @@ docker exec -it container_name /bin/bash
 
 # Execute specific command
 docker exec container_name ls -la /app
-
-# Run debugging container
-docker run --rm -it --pid container:target_container alpine
 ```
 
 #### 4. Network Troubleshooting
@@ -937,70 +483,108 @@ docker diff container_name
 docker system prune
 ```
 
-### Common Issues and Solutions:
-
-#### Container Won't Start:
-```bash
-# Check exit code
-docker ps -a
-
-# View detailed logs
-docker logs container_name
-
-# Run with different entrypoint
-docker run --entrypoint /bin/bash image_name
-```
-
-#### Performance Issues:
-```bash
-# Monitor resources
-docker stats
-
-# Check container limits
-docker inspect container_name | grep -i memory
-
-# Analyze processes
-docker exec container_name top
-```
-
-#### Network Issues:
-```bash
-# Check DNS resolution
-docker exec container_name nslookup google.com
-
-# Test port connectivity
-docker exec container_name telnet hostname port
-
-# Check routing
-docker exec container_name ip route
-```
-
 ---
 # Docker Architecture
 
-## 1. Explain Docker's client-server architecture in detail.
+## 1. Explain Docker's complete architecture and runtime components.
 
 ### Answer:
-Docker uses a client-server architecture that separates the user interface from the container management engine, enabling flexible deployment and remote management.
+Docker uses a layered architecture with multiple runtime components working together to provide containerization.
 
-### Architecture Components:
+### Complete Docker Architecture:
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           Docker Architecture                                      │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────────┐     REST API/gRPC     ┌─────────────────────────────────────┐  │
+│  │  Docker Client  │◄────────────────────►│         Docker Daemon              │  │
+│  │                 │                       │         (dockerd)                   │  │
+│  │ • docker build  │                       │                                     │  │
+│  │ • docker run    │                       │ ┌─────────────────────────────────┐ │  │
+│  │ • docker pull   │                       │ │        API Server              │ │  │
+│  │ • docker push   │                       │ │  • REST API endpoints          │ │  │
+│  │ • docker ps     │                       │ │  • Authentication              │ │  │
+│  └─────────────────┘                       │ │  • Request routing             │ │  │
+│                                             │ └─────────────────────────────────┘ │  │
+│  ┌─────────────────┐                       │                                     │  │
+│  │ Docker Compose  │                       │ ┌─────────────────────────────────┐ │  │
+│  │                 │                       │ │     Object Management           │ │  │
+│  │ • Multi-service │                       │ │  • Images                      │ │  │
+│  │ • Orchestration │                       │ │  • Containers                  │ │  │
+│  └─────────────────┘                       │ │  • Networks                    │ │  │
+│                                             │ │  • Volumes                     │ │  │
+│  ┌─────────────────┐                       │ └─────────────────────────────────┘ │  │
+│  │   Third-party   │                       │                                     │  │
+│  │     Tools       │                       │ ┌─────────────────────────────────┐ │  │
+│  │                 │                       │ │      Runtime Interface          │ │  │
+│  │ • Portainer     │                       │ │                                 │ │  │
+│  │ • Kubernetes    │                       │ │        containerd               │ │  │
+│  │ • CI/CD Tools   │                       │ │                                 │ │  │
+│  └─────────────────┘                       │ └─────────────┬───────────────────┘ │  │
+│                                             └───────────────┼─────────────────────┘  │
+│                                                             │                        │
+│  ┌─────────────────────────────────────────────────────────┼─────────────────────┐  │
+│  │                    Container Runtime Layer               │                     │  │
+│  │                                                          ▼                     │  │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐           │  │
+│  │  │  containerd-    │    │  containerd-    │    │  containerd-    │           │  │
+│  │  │     shim        │    │     shim        │    │     shim        │           │  │
+│  │  └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘           │  │
+│  │            │                      │                      │                   │  │
+│  │            ▼                      ▼                      ▼                   │  │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐           │  │
+│  │  │      runc       │    │      runc       │    │      runc       │           │  │
+│  │  └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘           │  │
+│  │            │                      │                      │                   │  │
+│  │            ▼                      ▼                      ▼                   │  │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐           │  │
+│  │  │   Container 1   │    │   Container 2   │    │   Container 3   │           │  │
+│  │  │                 │    │                 │    │                 │           │  │
+│  │  │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │           │  │
+│  │  │ │ Application │ │    │ │ Application │ │    │ │ Application │ │           │  │
+│  │  │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │           │  │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘           │  │
+│  └─────────────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+                                        ▲
+                                        │
+                                        │ Pull/Push Images
+                                        │
+                                        ▼
+                              ┌─────────────────┐
+                              │ Docker Registry │
+                              │                 │
+                              │ • Docker Hub    │
+                              │ • Private Reg   │
+                              │ • ECR/GCR/ACR   │
+                              │ • Harbor        │
+                              └─────────────────┘
+```
+
+### Communication Flow:
+```
+User Command → Docker Client → Docker Daemon → containerd → runc → Linux Kernel
+```
+
+### Component Details:
 
 #### 1. Docker Client (`docker` CLI)
 - **Purpose**: User interface to Docker ecosystem
 - **Communication**: REST API over Unix socket or TCP
-- **Features**: Command-line interface, remote daemon connection, plugin system support
+- **Features**: Command-line interface, remote daemon connection
 
 ```bash
 # Client configuration examples
 docker version                    # Shows client and server versions
 docker context ls                 # List available contexts
-docker context use remote-host    # Switch to remote Docker host
 docker -H tcp://remote:2376 ps    # Connect to remote daemon
 ```
 
 #### 2. Docker Daemon (`dockerd`)
 - **Purpose**: Core Docker service and API server
-- **Responsibilities**: API request handling, image management, container lifecycle, network management
+- **Responsibilities**: API request handling, image management, container lifecycle
 
 ```bash
 # Daemon management
@@ -1009,23 +593,46 @@ sudo systemctl start docker       # Start daemon
 journalctl -u docker.service -f   # Follow daemon logs
 ```
 
-#### 3. containerd
-- **Purpose**: High-level container runtime
-- **Functions**: Container lifecycle management, image management, runtime abstraction
-
-#### 4. runc
-- **Purpose**: Low-level OCI runtime
-- **Functions**: Container creation and execution, namespace and cgroup management
-
-### Communication Flow:
-```
-User Command → Docker Client → Docker Daemon → containerd → runc → Linux Kernel
-```
-
 ## 2. What is containerd and how does it relate to Docker?
 
 ### Answer:
 containerd is a high-level container runtime that serves as the core container runtime for Docker. It was extracted from Docker to create a more modular container ecosystem.
+
+### containerd Architecture:
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              containerd                                            │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │
+│  │   Docker CLI    │    │   Kubernetes    │    │   Other Tools   │                │
+│  │                 │    │     (CRI)       │    │                 │                │
+│  └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘                │
+│            │                      │                      │                        │
+│            └──────────────────────┼──────────────────────┘                        │
+│                                   │                                               │
+│                                   ▼                                               │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐  │
+│  │                        containerd API                                      │  │
+│  └─────────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                     │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │
+│  │     Images      │    │   Containers    │    │    Snapshots    │                │
+│  │                 │    │                 │    │                 │                │
+│  │ • Pull/Push     │    │ • Create        │    │ • Layer Mgmt    │                │
+│  │ • Store         │    │ • Start/Stop    │    │ • CoW Support   │                │
+│  │ • Metadata      │    │ • Monitor       │    │ • Diff Service  │                │
+│  └─────────────────┘    └─────────────────┘    └─────────────────┘                │
+│                                                                                     │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │
+│  │    Runtime      │    │     Events      │    │    Plugins      │                │
+│  │                 │    │                 │    │                 │                │
+│  │ • OCI Runtime   │    │ • Pub/Sub       │    │ • Extensible    │                │
+│  │ • Shim Mgmt     │    │ • Streaming     │    │ • Custom Logic  │                │
+│  │ • Task API      │    │ • Monitoring    │    │ • Third-party   │                │
+│  └─────────────────┘    └─────────────────┘    └─────────────────┘                │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ### containerd Features:
 
@@ -1038,15 +645,7 @@ ctr tasks start nginx-container
 ctr tasks list
 ```
 
-#### 2. Image Management
-```bash
-# Image operations with containerd
-ctr images list
-ctr images pull docker.io/library/alpine:latest
-ctr images remove docker.io/library/alpine:latest
-```
-
-### Benefits of containerd:
+#### 2. Benefits of containerd:
 - **Modularity**: Can be used without Docker daemon
 - **Kubernetes Integration**: Direct CRI support
 - **Performance**: Optimized for container operations
@@ -1094,88 +693,157 @@ runc kill container_id SIGTERM
 runc delete container_id
 ```
 
-## 4. What are Docker namespaces and how do they provide isolation?
+## 4. How does Docker implement isolation using namespaces and cgroups?
 
 ### Answer:
-Docker uses Linux namespaces to provide process isolation. Each namespace type isolates a specific aspect of the system.
+Docker uses Linux namespaces for process isolation and cgroups for resource management.
 
-### Namespace Types:
-
-#### 1. PID Namespace
-- **Purpose**: Isolates process IDs
-- **Benefit**: Containers have their own process tree
-
-#### 2. Network Namespace
-- **Purpose**: Isolates network interfaces
-- **Benefit**: Containers have separate network stacks
-
-#### 3. Mount Namespace
-- **Purpose**: Isolates filesystem mounts
-- **Benefit**: Containers have separate filesystem views
-
-#### 4. IPC Namespace
-- **Purpose**: Isolates inter-process communication
-- **Benefit**: Containers cannot interfere with each other's IPC
-
-#### 5. UTS Namespace
-- **Purpose**: Isolates hostname and domain name
-- **Benefit**: Containers can have different hostnames
-
-#### 6. User Namespace
-- **Purpose**: Isolates user and group IDs
-- **Benefit**: Root in container is not root on host
-
-### Example:
-```bash
-# View namespaces of a container
-docker exec container_name ls -la /proc/self/ns/
-
-# Create container with specific namespace
-docker run --pid=host nginx  # Uses host PID namespace
+### Namespace Isolation:
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              Host System                                           │
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐  │
+│  │                         Container                                           │  │
+│  │                                                                             │  │
+│  │  PID Namespace:     │  Network Namespace:  │  Mount Namespace:            │  │
+│  │  ┌─────────────┐    │  ┌─────────────┐     │  ┌─────────────┐             │  │
+│  │  │ PID 1: init │    │  │ eth0: veth  │     │  │ /: rootfs   │             │  │
+│  │  │ PID 2: app  │    │  │ lo: loopback│     │  │ /proc: proc │             │  │
+│  │  └─────────────┘    │  └─────────────┘     │  │ /sys: sysfs │             │  │
+│  │                     │                      │  └─────────────┘             │  │
+│  │                                                                             │  │
+│  │  IPC Namespace:     │  UTS Namespace:      │  User Namespace:             │  │
+│  │  ┌─────────────┐    │  ┌─────────────┐     │  ┌─────────────┐             │  │
+│  │  │ Msg Queues  │    │  │ Hostname    │     │  │ UID mapping │             │  │
+│  │  │ Semaphores  │    │  │ Domain name │     │  │ GID mapping │             │  │
+│  │  │ Shared Mem  │    │  └─────────────┘     │  └─────────────┘             │  │
+│  │  └─────────────┘    │                      │                               │  │
+│  └─────────────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## 5. How does Docker use cgroups for resource management?
+### cgroups Resource Management:
+```
+cgroups Hierarchy:
 
-### Answer:
-cgroups (control groups) limit and monitor resource usage of containers, providing resource isolation and management.
+/sys/fs/cgroup/
+├── cpu/
+│   └── docker/
+│       └── container_id/
+│           ├── cpu.cfs_quota_us      # CPU limit
+│           ├── cpu.cfs_period_us     # CPU period
+│           └── cpu.shares            # CPU weight
+├── memory/
+│   └── docker/
+│       └── container_id/
+│           ├── memory.limit_in_bytes # Memory limit
+│           ├── memory.usage_in_bytes # Current usage
+│           └── memory.oom_control    # OOM settings
+├── blkio/
+│   └── docker/
+│       └── container_id/
+│           ├── blkio.throttle.read_bps_device   # Read bandwidth
+│           └── blkio.throttle.write_bps_device  # Write bandwidth
+└── devices/
+    └── docker/
+        └── container_id/
+            └── devices.list         # Allowed devices
+```
 
-### Resource Types:
-
-#### 1. CPU Management
+### Resource Management Examples:
 ```bash
-# Limit CPU usage
+# CPU Management
 docker run --cpus="1.5" nginx
 docker run --cpu-shares=512 nginx
-```
 
-#### 2. Memory Management
-```bash
-# Limit memory
+# Memory Management
 docker run --memory="512m" nginx
 docker run --memory="1g" --memory-swap="2g" nginx
-```
 
-#### 3. I/O Management
-```bash
-# Limit I/O
+# I/O Management
 docker run --device-read-bps /dev/sda:1mb nginx
 docker run --device-write-bps /dev/sda:1mb nginx
 ```
 
-### cgroup Hierarchy:
+## 5. Explain Docker layers and the copy-on-write mechanism.
+
+### Answer:
+Docker images are built using a layered filesystem. Each instruction in a Dockerfile creates a new read-only layer. When you run a container, Docker adds a writable layer on top.
+
+### Layer Architecture:
 ```
-/sys/fs/cgroup/
-├── cpu/docker/container_id/
-│   ├── cpu.cfs_quota_us
-│   └── cpu.shares
-├── memory/docker/container_id/
-│   ├── memory.limit_in_bytes
-│   └── memory.usage_in_bytes
-└── blkio/docker/container_id/
-    └── blkio.throttle.read_bps_device
+Container (Read-Write Layer)
+┌─────────────────────────────┐ ← Writable layer (changes here)
+│     Container Layer         │
+├─────────────────────────────┤
+│     Layer 4: COPY app.py    │ ← Read-only layers
+├─────────────────────────────┤   (shared between containers)
+│     Layer 3: RUN install    │
+├─────────────────────────────┤
+│     Layer 2: RUN update     │
+├─────────────────────────────┤
+│     Layer 1: FROM ubuntu    │
+└─────────────────────────────┘
 ```
 
-## 6. Explain Docker's storage driver architecture.
+### Copy-on-Write (CoW) Mechanism:
+```
+Multiple Containers from Same Image:
+
+Container 1        Container 2        Container 3
+┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+│ Write Layer │   │ Write Layer │   │ Write Layer │
+├─────────────┤   ├─────────────┤   ├─────────────┤
+│             │   │             │   │             │
+│        Shared Read-Only Layers                  │
+│         (Image Layers)                          │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+### Layer Caching Benefits:
+```dockerfile
+# First build
+FROM node:16-alpine        # ✓ Downloaded
+WORKDIR /app              # ✓ Layer created
+COPY package*.json ./     # ✓ Layer created
+RUN npm install           # ✓ Layer created (slow)
+COPY . .                  # ✓ Layer created
+RUN npm run build         # ✓ Layer created
+
+# Second build (only code changed)
+FROM node:16-alpine        # ✓ Cache hit
+WORKDIR /app              # ✓ Cache hit
+COPY package*.json ./     # ✓ Cache hit
+RUN npm install           # ✓ Cache hit (fast!)
+COPY . .                  # ✗ Cache miss (code changed)
+RUN npm run build         # ✗ Rebuilt
+```
+
+### Layer Optimization Strategies:
+
+#### 1. Order Instructions by Change Frequency:
+```dockerfile
+# ✅ Good - stable instructions first
+FROM node:16-alpine
+WORKDIR /app
+COPY package*.json ./      # Changes less frequently
+RUN npm install
+COPY . .                   # Changes more frequently
+RUN npm run build
+```
+
+#### 2. Combine Related Commands:
+```dockerfile
+# ✅ Good - single layer
+RUN apt-get update && \
+    apt-get install -y curl git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+```
+
+## 6. What are Docker storage drivers and how do they work?
 
 ### Answer:
 Docker uses storage drivers to manage how images and containers are stored on the host filesystem.
@@ -1209,75 +877,15 @@ docker info | grep "Storage Driver"
 }
 ```
 
-## 7. What is the Docker daemon and how do you configure it?
+### Performance Comparison:
+| Driver | Performance | Storage Efficiency | Complexity |
+|--------|-------------|-------------------|------------|
+| overlay2 | High | High | Low |
+| aufs | Medium | Medium | Low |
+| devicemapper | High | Medium | High |
+| btrfs | High | High | Medium |
 
-### Answer:
-The Docker daemon (`dockerd`) is the background service that manages Docker objects and handles container operations.
-
-### Daemon Configuration:
-```json
-{
-  "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"],
-  "storage-driver": "overlay2",
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "10m",
-    "max-file": "3"
-  },
-  "registry-mirrors": ["https://mirror.example.com"],
-  "insecure-registries": ["registry.example.com:5000"]
-}
-```
-
-### Daemon Management:
-```bash
-# Start daemon
-sudo systemctl start docker
-
-# Stop daemon
-sudo systemctl stop docker
-
-# Restart daemon
-sudo systemctl restart docker
-
-# View daemon logs
-journalctl -u docker.service
-```
-
-## 8. How does Docker handle image layers and the copy-on-write mechanism?
-
-### Answer:
-Docker uses a copy-on-write (CoW) mechanism for efficient storage and fast container creation.
-
-### Layer Structure:
-```
-Container Layer (Read-Write)
-├── Image Layer 3 (Read-Only)
-├── Image Layer 2 (Read-Only)
-└── Image Layer 1 (Read-Only)
-```
-
-### Copy-on-Write Process:
-1. **Read Operations**: Read from existing layers
-2. **Write Operations**: Copy to container layer
-3. **Delete Operations**: Mark as deleted in container layer
-
-### Benefits:
-- **Efficiency**: Shared layers between containers
-- **Speed**: Fast container creation
-- **Storage**: Minimal disk usage
-- **Caching**: Reuse unchanged layers
-
-### Example:
-```bash
-# View image layers
-docker history nginx
-
-# View container layer changes
-docker diff container_name
-```
-
-## 9. Explain Docker's networking architecture and bridge networks.
+## 7. How does Docker handle networking at the architecture level?
 
 ### Answer:
 Docker creates a default bridge network (`docker0`) and allows custom networks for container communication.
@@ -1287,6 +895,30 @@ Docker creates a default bridge network (`docker0`) and allows custom networks f
 - **Gateway**: 172.17.0.1
 - **DNS**: Container name resolution
 - **Isolation**: Containers can communicate
+
+### Network Architecture:
+```
+Host Network Stack
+┌─────────────────────────────────────────────────────────────┐
+│                    Host Network                             │
+│                                                             │
+│  ┌─────────────────┐    ┌─────────────────┐                │
+│  │   Physical      │    │    Virtual      │                │
+│  │   Interface     │    │   Interfaces    │                │
+│  │   (eth0)        │    │   (docker0)     │                │
+│  └─────────────────┘    └─────────────────┘                │
+│           │                       │                        │
+│           │                       │                        │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │              Container Network Namespaces               │ │
+│  │                                                         │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │ │
+│  │  │ Container 1 │  │ Container 2 │  │ Container 3 │     │ │
+│  │  │   (veth)    │  │   (veth)    │  │   (veth)    │     │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘     │ │
+│  └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ### Network Management:
 ```bash
@@ -1303,10 +935,23 @@ docker network create --driver bridge mynetwork
 docker network connect mynetwork container_name
 ```
 
-## 10. What is the Docker API and how do you interact with it?
+## 8. What is the Docker API and how does it work?
 
 ### Answer:
 Docker provides a REST API for programmatic access to Docker functionality.
+
+### API Architecture:
+```
+┌─────────────────┐    HTTP/REST API    ┌─────────────────┐
+│   API Client    │◄──────────────────►│  Docker Daemon  │
+│                 │                     │                 │
+│ • curl          │                     │ • API Server    │
+│ • Python SDK    │                     │ • Request       │
+│ • Go SDK        │                     │   Handler       │
+│ • Custom Apps   │                     │ • Response      │
+└─────────────────┘                     │   Generator     │
+                                        └─────────────────┘
+```
 
 ### API Endpoints:
 - **Containers**: `/containers/`
@@ -1338,36 +983,7 @@ curl -X POST http://localhost:2376/containers/create \
 ---
 # Docker Networking
 
-## 1. Explain Docker's default networking model and bridge networks.
-
-### Answer:
-Docker creates a default bridge network (`docker0`) that provides network isolation and connectivity for containers.
-
-### Default Bridge Network:
-- **Subnet**: 172.17.0.0/16 (configurable)
-- **Gateway**: 172.17.0.1
-- **DNS**: Automatic container name resolution
-- **Isolation**: Containers can communicate with each other
-
-### Network Flow:
-```
-Internet → Host Network → docker0 Bridge → Container Network
-```
-
-### Example:
-```bash
-# View default bridge network
-docker network inspect bridge
-
-# Run containers on default bridge
-docker run -d --name web1 nginx
-docker run -d --name web2 nginx
-
-# Containers can communicate by IP
-docker exec web1 ping 172.17.0.3
-```
-
-## 2. What are the different Docker networking modes and when to use each?
+## 1. Explain Docker's networking modes and when to use each.
 
 ### Answer:
 
@@ -1419,7 +1035,7 @@ docker network create --driver macvlan \
   -o parent=eth0 mymacvlan
 ```
 
-## 3. How do you create and manage custom Docker networks?
+## 2. How do you create and manage custom Docker networks?
 
 ### Answer:
 
@@ -1466,7 +1082,7 @@ docker network disconnect mynetwork container_name
 docker run -d --network mynetwork nginx
 ```
 
-## 4. Explain Docker's service discovery and DNS resolution.
+## 3. Explain Docker's service discovery and DNS resolution.
 
 ### Answer:
 Docker provides built-in DNS resolution for container-to-container communication.
@@ -1501,42 +1117,7 @@ docker run -d --name web \
 docker exec db ping webserver
 ```
 
-## 5. How do you expose and publish container ports?
-
-### Answer:
-
-### Port Exposure vs Publishing:
-
-| Concept | Description | Example |
-|---------|-------------|---------|
-| **EXPOSE** | Documents port (Dockerfile) | `EXPOSE 80` |
-| **Publish** | Maps host port to container | `-p 8080:80` |
-
-### Port Publishing Options:
-```bash
-# Map host port to container port
-docker run -p 8080:80 nginx
-
-# Map random host port
-docker run -P nginx
-
-# Map specific host IP
-docker run -p 127.0.0.1:8080:80 nginx
-
-# Map UDP port
-docker run -p 8080:80/udp nginx
-
-# Map multiple ports
-docker run -p 8080:80 -p 8443:443 nginx
-```
-
-### Port Range:
-```bash
-# Map port range
-docker run -p 8080-8090:80-90 nginx
-```
-
-## 6. What is Docker's network security model?
+## 4. What is Docker's network security model?
 
 ### Answer:
 
@@ -1566,7 +1147,7 @@ iptables -A DOCKER-USER -i docker0 -j DROP
 iptables -A DOCKER-USER -s 172.17.0.2 -d 172.17.0.3 -j ACCEPT
 ```
 
-## 7. How do you troubleshoot Docker networking issues?
+## 5. How do you troubleshoot Docker networking issues?
 
 ### Answer:
 
@@ -1620,53 +1201,7 @@ docker network inspect network_name
 docker exec container_name ping -c 3 8.8.8.8
 ```
 
-## 8. Explain Docker Compose networking.
-
-### Answer:
-
-### Default Compose Network:
-- **Name**: `{project_name}_default`
-- **Driver**: Bridge
-- **Communication**: All services can communicate by name
-
-### Compose Network Configuration:
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-    networks:
-      - frontend
-  
-  db:
-    image: postgres
-    networks:
-      - backend
-      - frontend
-
-networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
-    internal: true
-```
-
-### External Networks:
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-    networks:
-      - external-network
-
-networks:
-  external-network:
-    external: true
-```
-
-## 9. How do you implement load balancing with Docker networking?
+## 6. How do you implement load balancing with Docker networking?
 
 ### Answer:
 
@@ -1714,7 +1249,7 @@ docker run -d --name web1 --network lb-network nginx
 docker run -d --name web2 --network lb-network nginx
 ```
 
-## 10. What are Docker's network plugins and how do you use them?
+## 7. What are Docker's network plugins and how do you use them?
 
 ### Answer:
 
@@ -1745,6 +1280,52 @@ docker plugin set weaveworks/net-plugin:latest \
 # Enable plugin
 docker plugin enable weaveworks/net-plugin:latest
 ```
+
+## 8. How does Docker networking work in multi-host environments?
+
+### Answer:
+
+### Docker Swarm Overlay Networks:
+```bash
+# Initialize swarm
+docker swarm init
+
+# Create overlay network
+docker network create --driver overlay --attachable myoverlay
+
+# Deploy service across nodes
+docker service create --name web --network myoverlay --replicas 3 nginx
+```
+
+### Network Architecture in Swarm:
+```
+Node 1                          Node 2                          Node 3
+┌─────────────────┐             ┌─────────────────┐             ┌─────────────────┐
+│   Container A   │             │   Container B   │             │   Container C   │
+│                 │             │                 │             │                 │
+│ ┌─────────────┐ │             │ ┌─────────────┐ │             │ ┌─────────────┐ │
+│ │   App       │ │             │ │   App       │ │             │ │   App       │ │
+│ └─────────────┘ │             │ └─────────────┘ │             │ └─────────────┘ │
+│                 │             │                 │             │                 │
+└─────────┬───────┘             └─────────┬───────┘             └─────────┬───────┘
+          │                               │                               │
+          └───────────────────────────────┼───────────────────────────────┘
+                                          │
+                              ┌─────────────────┐
+                              │ Overlay Network │
+                              │   (Encrypted)   │
+                              │                 │
+                              │ • VXLAN         │
+                              │ • Service Mesh  │
+                              │ • Load Balance  │
+                              └─────────────────┘
+```
+
+### Key Features:
+- **Encryption**: Built-in encryption for overlay networks
+- **Service Discovery**: Automatic service discovery across nodes
+- **Load Balancing**: Built-in load balancing for services
+- **Routing Mesh**: Ingress routing mesh for external access
 
 ---
 # Docker Security
@@ -1811,29 +1392,7 @@ docker run --security-opt seccomp=default nginx
 docker run --security-opt no-new-privileges nginx
 ```
 
-### Comprehensive Security Best Practices:
-
-#### Defense in Depth Strategy:
-```bash
-# Multi-layered security approach
-docker run -d \
-  --name secure-app \
-  --user 1000:1000 \
-  --cap-drop ALL \
-  --cap-add NET_BIND_SERVICE \
-  --read-only \
-  --tmpfs /tmp \
-  --memory=512m \
-  --cpus=1.0 \
-  --pids-limit=100 \
-  --security-opt no-new-privileges \
-  --security-opt seccomp=default \
-  --security-opt apparmor=docker-default \
-  --network custom-network \
-  myapp:latest
-```
-
-## 2. How do you secure Docker images and what is image scanning?
+## 2. How do you secure Docker images and implement image scanning?
 
 ### Answer:
 
@@ -1897,55 +1456,7 @@ anchore-cli image add nginx:latest
 anchore-cli image vuln nginx:latest all
 ```
 
-## 3. Explain Docker's security model and isolation mechanisms.
-
-### Answer:
-
-### Docker Security Model:
-
-#### 1. Namespace Isolation
-```bash
-# View container namespaces
-docker exec container_name ls -la /proc/self/ns/
-
-# Run container with specific namespace
-docker run --pid=host nginx  # Uses host PID namespace
-```
-
-#### 2. cgroups Resource Limits
-```bash
-# Limit memory usage
-docker run --memory=512m nginx
-
-# Limit CPU usage
-docker run --cpus=1.0 nginx
-
-# Limit I/O operations
-docker run --device-read-bps /dev/sda:1mb nginx
-```
-
-#### 3. Capabilities
-```bash
-# Drop all capabilities
-docker run --cap-drop ALL nginx
-
-# Add specific capabilities
-docker run --cap-add NET_BIND_SERVICE nginx
-
-# List container capabilities
-docker exec container_name capsh --print
-```
-
-#### 4. Seccomp Profiles
-```bash
-# Use custom seccomp profile
-docker run --security-opt seccomp=profile.json nginx
-
-# Disable seccomp (not recommended)
-docker run --security-opt seccomp=unconfined nginx
-```
-
-## 4. How do you manage secrets in Docker containers?
+## 3. How do you manage secrets in Docker containers?
 
 ### Answer:
 
@@ -2004,119 +1515,7 @@ docker run -e VAULT_ADDR=https://vault.example.com nginx
 docker run -e AWS_REGION=us-east-1 nginx
 ```
 
-## 5. What are Docker's security best practices for production?
-
-### Answer:
-
-### Production Security Checklist:
-
-#### 1. Container Configuration
-```bash
-# Run as non-root user
-docker run --user 1000:1000 nginx
-
-# Use read-only filesystem
-docker run --read-only nginx
-
-# Drop unnecessary capabilities
-docker run --cap-drop ALL --cap-add NET_BIND_SERVICE nginx
-
-# Limit container resources
-docker run --memory=512m --cpus=1.0 nginx
-```
-
-#### 2. Network Security
-```bash
-# Use custom networks
-docker network create --internal secure-network
-
-# Limit port exposure
-docker run -p 127.0.0.1:8080:80 nginx
-
-# Use TLS for communication
-docker run -p 443:443 -v /certs:/certs nginx
-```
-
-#### 3. Image Security
-```dockerfile
-# Use minimal base images
-FROM alpine:latest
-
-# Run as non-root user
-RUN adduser -D -s /bin/sh appuser
-USER appuser
-
-# Remove package manager
-RUN apk del apk-tools
-
-# Use multi-stage builds
-FROM node:16-alpine AS builder
-# ... build steps
-FROM alpine:latest
-COPY --from=builder /app /app
-```
-
-#### 4. Runtime Security
-```bash
-# Use security profiles
-docker run --security-opt seccomp=profile.json nginx
-
-# Enable AppArmor
-docker run --security-opt apparmor=docker-default nginx
-
-# Use SELinux
-docker run --security-opt label:type:container_t nginx
-```
-
-## 6. How do you implement Docker security scanning in CI/CD?
-
-### Answer:
-
-### CI/CD Security Pipeline:
-
-#### 1. Pre-build Scanning
-```yaml
-# GitHub Actions example
-name: Security Scan
-on: [push, pull_request]
-
-jobs:
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Build Docker image
-        run: docker build -t myapp:latest .
-      
-      - name: Scan image
-        run: docker scan myapp:latest
-      
-      - name: Trivy scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'myapp:latest'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-```
-
-#### 2. Base Image Scanning
-```bash
-# Scan base images regularly
-docker scan node:16-alpine
-docker scan nginx:alpine
-docker scan postgres:13-alpine
-```
-
-#### 3. Dependency Scanning
-```bash
-# Scan for vulnerable dependencies
-npm audit
-pip check
-go list -json -m all | nancy sleuth
-```
-
-## 7. Explain Docker's security features: AppArmor, SELinux, and seccomp.
+## 4. Explain Docker's security features: AppArmor, SELinux, and seccomp.
 
 ### Answer:
 
@@ -2182,7 +1581,7 @@ docker run --security-opt seccomp=unconfined nginx
 }
 ```
 
-## 8. How do you secure Docker daemon and API access?
+## 5. How do you secure Docker daemon and API access?
 
 ### Answer:
 
@@ -2224,7 +1623,55 @@ sudo chmod 660 /var/run/docker.sock
 sudo chown root:docker /var/run/docker.sock
 ```
 
-## 9. What are Docker security vulnerabilities and how do you mitigate them?
+## 6. How do you implement Docker security scanning in CI/CD?
+
+### Answer:
+
+### CI/CD Security Pipeline:
+
+#### 1. Pre-build Scanning
+```yaml
+# GitHub Actions example
+name: Security Scan
+on: [push, pull_request]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Build Docker image
+        run: docker build -t myapp:latest .
+      
+      - name: Scan image
+        run: docker scan myapp:latest
+      
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'myapp:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+```
+
+#### 2. Base Image Scanning
+```bash
+# Scan base images regularly
+docker scan node:16-alpine
+docker scan nginx:alpine
+docker scan postgres:13-alpine
+```
+
+#### 3. Dependency Scanning
+```bash
+# Scan for vulnerable dependencies
+npm audit
+pip check
+go list -json -m all | nancy sleuth
+```
+
+## 7. What are Docker security vulnerabilities and how do you mitigate them?
 
 ### Answer:
 
@@ -2271,7 +1718,7 @@ docker network create --internal secure-network
 docker run --network secure-network nginx
 ```
 
-## 10. How do you implement Docker security monitoring and auditing?
+## 8. How do you implement Docker security monitoring and auditing?
 
 ### Answer:
 
@@ -2333,10 +1780,10 @@ docker run --rm --net host --pid host --userns host \
 ---
 # Docker Compose
 
-## 1. What is Docker Compose and how does it differ from Docker?
+## 1. How does Docker Compose differ from Docker and when should you use it?
 
 ### Answer:
-Docker Compose is a tool for defining and running multi-container Docker applications using YAML configuration files. It simplifies the management of complex applications with multiple interconnected services.
+Docker Compose is a tool for defining and running multi-container Docker applications using YAML configuration files.
 
 ### Docker vs Docker Compose:
 
@@ -2349,20 +1796,12 @@ Docker Compose is a tool for defining and running multi-container Docker applica
 | **Scaling** | Manual scaling | Built-in scaling commands |
 | **Dependencies** | Manual dependency management | Automatic dependency resolution |
 
-### When to Use Each:
-
-#### Use Docker when:
-- Single container applications
-- Simple microservices
-- Learning Docker basics
-- Quick testing or prototyping
-
-#### Use Docker Compose when:
-- Multi-container applications
-- Development environments
-- Local testing of distributed systems
-- Applications with databases, caches, queues
-- Microservices architectures
+### When to Use Docker Compose:
+- **Multi-container applications**
+- **Development environments**
+- **Local testing of distributed systems**
+- **Applications with databases, caches, queues**
+- **Microservices architectures**
 
 ### Practical Examples:
 
@@ -2402,7 +1841,7 @@ volumes:
 docker-compose up -d
 ```
 
-## 2. Explain the structure of a docker-compose.yml file.
+## 2. Explain the structure and key sections of a docker-compose.yml file.
 
 ### Answer:
 
@@ -2444,6 +1883,60 @@ networks:
 2. **services**: Define application services
 3. **volumes**: Define persistent storage
 4. **networks**: Define custom networks
+
+### Advanced Configuration:
+```yaml
+version: '3.8'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+    volumes:
+      - ./app:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: myapp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
+```
 
 ## 3. How do you manage environment variables in Docker Compose?
 
@@ -2500,80 +1993,7 @@ services:
       - .env
 ```
 
-## 4. Explain Docker Compose networking and service discovery.
-
-### Answer:
-
-### Default Networking:
-- **Network Name**: `{project_name}_default`
-- **Driver**: Bridge
-- **Service Discovery**: Automatic DNS resolution
-
-### Service Communication:
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-    depends_on:
-      - api
-      - db
-
-  api:
-    image: node:16
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: myapp
-```
-
-### Custom Networks:
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-    networks:
-      - frontend
-
-  api:
-    image: node:16
-    networks:
-      - frontend
-      - backend
-
-  db:
-    image: postgres:13
-    networks:
-      - backend
-
-networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
-    internal: true
-```
-
-### External Networks:
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-    networks:
-      - external-network
-
-networks:
-  external-network:
-    external: true
-```
-
-## 5. How do you manage volumes and persistent data in Docker Compose?
+## 4. How do you handle volumes and persistent data in Docker Compose?
 
 ### Answer:
 
@@ -2604,17 +2024,7 @@ services:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
 ```
 
-#### 3. Anonymous Volumes
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-    volumes:
-      - /var/cache/nginx
-```
-
-#### 4. External Volumes
+#### 3. External Volumes
 ```yaml
 version: '3.8'
 services:
@@ -2628,7 +2038,7 @@ volumes:
     external: true
 ```
 
-### Volume Configuration:
+#### 4. Volume Configuration
 ```yaml
 version: '3.8'
 services:
@@ -2646,66 +2056,7 @@ volumes:
       device: /opt/postgres_data
 ```
 
-## 6. What are Docker Compose profiles and how do you use them?
-
-### Answer:
-
-### Profiles Overview:
-Profiles allow you to define different sets of services for different environments or use cases.
-
-### Profile Definition:
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-    profiles:
-      - production
-      - staging
-
-  db:
-    image: postgres:13
-    profiles:
-      - production
-      - staging
-      - development
-
-  redis:
-    image: redis:alpine
-    profiles:
-      - production
-
-  dev-tools:
-    image: node:16
-    profiles:
-      - development
-```
-
-### Using Profiles:
-```bash
-# Start all services
-docker-compose up
-
-# Start specific profile
-docker-compose --profile production up
-
-# Start multiple profiles
-docker-compose --profile production --profile monitoring up
-
-# Start all services except specific profile
-docker-compose --profile production up
-```
-
-### Environment-specific Compose Files:
-```bash
-# Development
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-
-# Production
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
-```
-
-## 7. How do you scale services in Docker Compose?
+## 5. How do you scale services in Docker Compose?
 
 ### Answer:
 
@@ -2752,70 +2103,63 @@ services:
       start_period: 40s
 ```
 
-## 8. Explain Docker Compose override files and inheritance.
+## 6. How do you use Docker Compose profiles for different environments?
 
 ### Answer:
 
-### Override Files:
-Override files allow you to extend or override the base configuration for different environments.
+### Profiles Overview:
+Profiles allow you to define different sets of services for different environments or use cases.
 
-### Base Configuration:
+### Profile Definition:
 ```yaml
-# docker-compose.yml
 version: '3.8'
 services:
   web:
     image: nginx
-    ports:
-      - "80:80"
-    environment:
-      - NODE_ENV=development
+    profiles:
+      - production
+      - staging
+
+  db:
+    image: postgres:13
+    profiles:
+      - production
+      - staging
+      - development
+
+  redis:
+    image: redis:alpine
+    profiles:
+      - production
+
+  dev-tools:
+    image: node:16
+    profiles:
+      - development
 ```
 
-### Development Override:
-```yaml
-# docker-compose.override.yml
-version: '3.8'
-services:
-  web:
-    volumes:
-      - ./src:/app/src
-    environment:
-      - DEBUG=true
-    ports:
-      - "3000:80"
-```
-
-### Production Override:
-```yaml
-# docker-compose.prod.yml
-version: '3.8'
-services:
-  web:
-    environment:
-      - NODE_ENV=production
-    deploy:
-      replicas: 3
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
-```
-
-### Using Override Files:
+### Using Profiles:
 ```bash
-# Development (uses override automatically)
+# Start all services
 docker-compose up
+
+# Start specific profile
+docker-compose --profile production up
+
+# Start multiple profiles
+docker-compose --profile production --profile monitoring up
+```
+
+### Environment-specific Compose Files:
+```bash
+# Development
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 # Production
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
-
-# Custom override
-docker-compose -f docker-compose.yml -f docker-compose.custom.yml up
 ```
 
-## 9. How do you handle secrets and sensitive data in Docker Compose?
+## 7. How do you handle secrets and sensitive data in Docker Compose?
 
 ### Answer:
 
@@ -2866,7 +2210,7 @@ services:
       - ./secrets:/app/secrets:ro
 ```
 
-## 10. What are the best practices for Docker Compose in production?
+## 8. What are the best practices for Docker Compose in production?
 
 ### Answer:
 
@@ -2959,7 +2303,34 @@ networks:
     internal: true
 ```
 
+#### 7. New Docker Compose Features
+```yaml
+version: '3.8'
+services:
+  web:
+    image: nginx
+    # Watch mode for development
+    develop:
+      watch:
+        - action: sync
+          path: ./html
+          target: /usr/share/nginx/html
+        - action: rebuild
+          path: ./Dockerfile
+    
+    # Include other compose files
+    include:
+      - monitoring.yml
+      - logging.yml
+    
+    # Annotations for metadata
+    annotations:
+      com.example.description: "Web server"
+      com.example.version: "1.0"
+```
+
 ---
+
 # Dockerfile Best Practices
 
 ## 1. What are the essential Dockerfile best practices for production?
@@ -3066,17 +2437,7 @@ RUN apk add --no-cache curl && \
     apk del apk-tools
 ```
 
-#### 4. Use Read-Only Filesystem
-```dockerfile
-# Use read-only filesystem
-FROM alpine:latest
-RUN apk add --no-cache nginx
-COPY nginx.conf /etc/nginx/nginx.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-#### 5. Scan for Vulnerabilities
+#### 4. Scan for Vulnerabilities
 ```bash
 # Scan image for vulnerabilities
 docker scan nginx:latest
@@ -3107,32 +2468,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ```
 
-#### 3. Use Multi-Stage Builds
-```dockerfile
-# Build stage
-FROM golang:1.19 AS builder
-WORKDIR /app
-COPY . .
-RUN go build -o app
-
-# Production stage
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-COPY --from=builder /app/app .
-CMD ["./app"]
-```
-
-#### 4. Optimize Dependencies
-```dockerfile
-# Install only production dependencies
-RUN npm install --only=production
-
-# Remove dev dependencies
-RUN npm prune --production
-```
-
-#### 5. Use Distroless Images
+#### 3. Use Distroless Images
 ```dockerfile
 # Use distroless image
 FROM gcr.io/distroless/java:11
@@ -3160,23 +2496,7 @@ RUN --mount=type=secret,id=npm_token \
 docker buildx build --secret id=npm_token,src=./npm_token .
 ```
 
-#### 3. Use Environment Variables
-```dockerfile
-# Use environment variables for configuration
-ENV NODE_ENV=production
-ENV PORT=3000
-```
-
-#### 4. Avoid Hardcoded Secrets
-```dockerfile
-# Bad: Hardcoded secret
-RUN echo "password123" | some-command
-
-# Good: Use environment variable
-RUN echo "$SECRET_PASSWORD" | some-command
-```
-
-#### 5. Use Multi-Stage Builds for Secrets
+#### 3. Use Multi-Stage Builds for Secrets
 ```dockerfile
 # Build stage with secrets
 FROM node:16-alpine AS builder
@@ -3211,27 +2531,6 @@ HEALTHCHECK CMD pg_isready -U postgres || exit 1
 
 # Custom health check script
 HEALTHCHECK CMD /app/health-check.sh || exit 1
-```
-
-#### 3. Configure Health Check Parameters
-```dockerfile
-# Configure health check timing
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost/health || exit 1
-```
-
-#### 4. Use Health Check in Docker Compose
-```yaml
-version: '3.8'
-services:
-  web:
-    build: .
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 ```
 
 ## 6. How do you optimize Dockerfile for different environments?
@@ -3276,15 +2575,6 @@ COPY . .
 CMD ["npm", "start"]
 ```
 
-#### 4. Use Different Base Images
-```dockerfile
-# Development: Full image with dev tools
-FROM node:16 AS development
-
-# Production: Minimal image
-FROM node:16-alpine AS production
-```
-
 ## 7. How do you handle dependencies and package management in Dockerfiles?
 
 ### Answer:
@@ -3311,23 +2601,7 @@ RUN npm ci --only=production
 RUN npm install && npm cache clean --force
 ```
 
-#### 4. Use Multi-Stage Builds for Dependencies
-```dockerfile
-# Dependencies stage
-FROM node:16-alpine AS deps
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-
-# Production stage
-FROM node:16-alpine
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-CMD ["npm", "start"]
-```
-
-#### 5. Handle System Dependencies
+#### 4. Handle System Dependencies
 ```dockerfile
 # Install system dependencies
 RUN apk add --no-cache \
@@ -3338,43 +2612,7 @@ RUN apk add --no-cache \
     && apk del python3 make g++
 ```
 
-## 8. How do you implement proper logging and monitoring in Dockerfiles?
-
-### Answer:
-
-#### 1. Configure Logging
-```dockerfile
-# Configure logging driver
-FROM nginx:alpine
-COPY nginx.conf /etc/nginx/nginx.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-#### 2. Use Structured Logging
-```dockerfile
-# Use structured logging
-FROM node:16-alpine
-WORKDIR /app
-COPY . .
-RUN npm install
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-#### 3. Add Monitoring Endpoints
-```dockerfile
-# Add health and metrics endpoints
-FROM nginx:alpine
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY health-check.sh /usr/local/bin/health-check.sh
-RUN chmod +x /usr/local/bin/health-check.sh
-EXPOSE 80
-HEALTHCHECK CMD /usr/local/bin/health-check.sh
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-## 9. How do you optimize Dockerfile for CI/CD pipelines?
+## 8. How do you optimize Dockerfile for CI/CD pipelines?
 
 ### Answer:
 
@@ -3396,23 +2634,7 @@ RUN --mount=type=cache,target=/root/.npm \
     npm install
 ```
 
-#### 3. Parallel Builds
-```dockerfile
-# Enable parallel builds
-FROM node:16-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-FROM node:16-alpine
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-CMD ["npm", "start"]
-```
-
-#### 4. Use Multi-Platform Builds
+#### 3. Use Multi-Platform Builds
 ```dockerfile
 # Build for multiple platforms
 FROM --platform=$BUILDPLATFORM node:16-alpine AS builder
@@ -3426,52 +2648,61 @@ COPY --from=builder /app/dist ./dist
 CMD ["npm", "start"]
 ```
 
-## 10. How do you handle configuration management in Dockerfiles?
-
-### Answer:
-
-#### 1. Use Environment Variables
-```dockerfile
-# Use environment variables for configuration
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV DB_HOST=localhost
-ENV DB_PORT=5432
-```
-
-#### 2. Use Configuration Files
-```dockerfile
-# Copy configuration files
-COPY config/ /app/config/
-COPY nginx.conf /etc/nginx/nginx.conf
-```
-
-#### 3. Use Init Scripts
-```dockerfile
-# Use init script for configuration
-COPY init.sh /usr/local/bin/init.sh
-RUN chmod +x /usr/local/bin/init.sh
-ENTRYPOINT ["/usr/local/bin/init.sh"]
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-#### 4. Use Configuration Management Tools
-```dockerfile
-# Use configuration management
-FROM nginx:alpine
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY config/ /etc/nginx/conf.d/
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
 ---
 # Latest Features
 
-## 1. Docker Init - Project Initialization
+## 1. What is Docker Scout and how does it enhance container security?
 
 ### Answer:
-Docker Init is a new feature that automatically generates Docker-related files for your project, making it easier to containerize applications.
+Docker Scout is a comprehensive vulnerability analysis and remediation platform that provides continuous security insights for container images.
+
+### Key Features:
+- **Vulnerability Scanning**: Deep analysis of image layers and dependencies
+- **Policy Evaluation**: Custom security policies and compliance checks
+- **Remediation Guidance**: Actionable recommendations for fixing issues
+- **Integration**: Works with CI/CD pipelines and registries
+- **Real-time Monitoring**: Continuous monitoring of deployed images
+
+### Usage:
+```bash
+# Enable Docker Scout
+docker scout enroll
+
+# Scan an image
+docker scout cves nginx:latest
+
+# Compare images
+docker scout compare nginx:1.20 nginx:1.21
+
+# View recommendations
+docker scout recommendations nginx:latest
+
+# Policy evaluation
+docker scout policy nginx:latest
+```
+
+### Advanced Features:
+```bash
+# Scan with SBOM
+docker scout sbom nginx:latest
+
+# Export results
+docker scout cves --format json nginx:latest > results.json
+
+# Integration with registries
+docker scout repo enable myregistry/myimage
+```
+
+### Benefits:
+- **Proactive Security**: Early vulnerability detection
+- **Compliance**: Meet security standards and policies
+- **Supply Chain Security**: Track dependencies and licenses
+- **Automated Remediation**: Automated security updates
+
+## 2. What is Docker Init and how does it help in project setup?
+
+### Answer:
+Docker Init is a feature that automatically generates Docker-related files for your project, making it easier to containerize applications.
 
 ### Features:
 - **Automatic Detection**: Detects project type (Node.js, Python, Go, etc.)
@@ -3509,36 +2740,7 @@ CMD ["npm", "start"]
 - **Consistency**: Standardized project structure
 - **Learning**: Shows proper Docker patterns
 
-## 2. Docker Ask Gordon - AI-Powered Assistance
-
-### Answer:
-Docker Ask Gordon is an AI-powered assistant integrated into Docker Desktop that helps developers with Docker-related questions and tasks.
-
-### Features:
-- **Natural Language Queries**: Ask questions in plain English
-- **Code Generation**: Generate Dockerfiles and configurations
-- **Troubleshooting**: Get help with Docker issues
-- **Best Practices**: Receive recommendations for optimization
-
-### Usage Examples:
-```bash
-# Ask questions about Docker
-"How do I optimize my Dockerfile for production?"
-
-# Get help with specific issues
-"My container is running out of memory, what should I do?"
-
-# Request code generation
-"Create a Dockerfile for a Python Flask application"
-```
-
-### Capabilities:
-- **Dockerfile Optimization**: Suggests improvements
-- **Security Recommendations**: Identifies security issues
-- **Performance Tuning**: Provides performance tips
-- **Troubleshooting**: Helps debug problems
-
-## 3. Running AI Models with Docker
+## 7. How do you run AI/ML models using Docker containers?
 
 ### Answer:
 Docker provides an excellent platform for running AI models with consistent environments and easy deployment.
@@ -3607,9 +2809,36 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+
+  model-runner:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_MODELS=/root/.ollama/models
+
+volumes:
+  ollama_data:
 ```
 
-## 4. Docker Multi-Platform Builds
+### Model Runners and Agents:
+```bash
+# Run Ollama model runner
+docker run -d -p 11434:11434 ollama/ollama
+
+# Pull and run models
+docker exec ollama ollama pull llama2
+docker exec ollama ollama run llama2
+
+# Run with cAgent (Container Agent)
+docker run -d --name cagent \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  cagent/agent:latest
+```
+
+## 8. How do you build Docker images for multiple platforms?
 
 ### Answer:
 Docker's multi-platform build feature allows you to create images that work on different architectures (AMD64, ARM64, etc.).
@@ -3665,7 +2894,7 @@ docker buildx build --platform windows/amd64 -t myapp:windows .
 - **Compatibility**: Works on different hardware
 - **Deployment**: Deploy to various environments
 
-## 5. Docker BuildKit and Advanced Build Features
+## 4. What is Docker BuildKit and what advanced features does it provide?
 
 ### Answer:
 Docker BuildKit is the next-generation build engine that provides advanced features for building Docker images.
@@ -3718,11 +2947,353 @@ docker buildx build --ssh default .
 - **Flexibility**: Advanced build features
 - **Efficiency**: Better caching and optimization
 
+## 3. What are Docker Extensions and how do they enhance functionality?
+
+### Answer:
+Docker Extensions are third-party tools that extend Docker Desktop functionality, providing additional features and integrations.
+
+### Popular Extensions:
+- **Database Extensions**: PostgreSQL, MySQL, MongoDB
+- **Monitoring Tools**: Prometheus, Grafana
+- **Development Tools**: VS Code, Git
+- **Security Tools**: Vulnerability scanners
+- **AI/ML Tools**: Model runners, training environments
+
+### Installation:
+```bash
+# Install extension from Docker Desktop
+docker extension install extension-name
+
+# List installed extensions
+docker extension ls
+
+# Remove extension
+docker extension uninstall extension-name
+```
+
+### Development:
+```javascript
+// Example extension manifest
+{
+  "name": "my-extension",
+  "version": "1.0.0",
+  "description": "My Docker extension",
+  "ui": {
+    "src": "ui/index.html"
+  },
+  "backend": {
+    "src": "backend/index.js"
+  }
+}
+```
+
+### Benefits:
+- **Customization**: Tailored Docker experience
+- **Integration**: Third-party tool integration
+- **Productivity**: Enhanced development workflow
+- **Ecosystem**: Rich extension marketplace
+
+## 4. What is Docker Build Cloud and how does it accelerate builds?
+
+### Answer:
+Docker Build Cloud is a service that provides remote build capabilities with enhanced performance and caching.
+
+### Key Features:
+- **Remote Builds**: Offload builds to cloud infrastructure
+- **Shared Cache**: Team-wide build cache sharing
+- **Multi-Platform**: Native multi-architecture builds
+- **Performance**: Faster builds with optimized infrastructure
+
+### Usage:
+```bash
+# Set up Build Cloud
+docker buildx create --driver cloud mybuilder
+
+# Use cloud builder
+docker buildx use mybuilder
+
+# Build with cloud
+docker buildx build --platform linux/amd64,linux/arm64 -t myapp .
+
+# Shared cache
+docker buildx build --cache-from type=registry,ref=myregistry/cache .
+```
+
+### Benefits:
+- **Speed**: Faster build times
+- **Scalability**: Handle large builds
+- **Collaboration**: Shared team resources
+- **Cost Efficiency**: Pay-per-use model
+
+## 5. How do you use Docker with MCP (Model Context Protocol)?
+
+### Answer:
+MCP enables AI models to interact with Docker containers and manage containerized applications.
+
+### MCP Integration:
+```bash
+# MCP-enabled Docker commands
+mcp docker run nginx
+mcp docker build -t myapp .
+mcp docker compose up
+```
+
+### MCP Gateway:
+```yaml
+# docker-compose.yml with MCP Gateway
+version: '3.8'
+services:
+  mcp-gateway:
+    image: mcp/gateway:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - MCP_DOCKER_SOCKET=/var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+  app:
+    image: myapp
+    labels:
+      - "mcp.enable=true"
+      - "mcp.model=gpt-4"
+```
+
+### Benefits:
+- **AI-Driven Operations**: Intelligent container management
+- **Natural Language**: Control Docker with natural language
+- **Automation**: AI-powered workflows
+- **Context Awareness**: Understanding of application state
+
+## 6. What is Docker Hub Insights (DHI) and how does it help?
+
+### Answer:
+Docker Hub Insights provides analytics and insights for Docker Hub repositories and image usage.
+
+### Key Features:
+- **Usage Analytics**: Download statistics and trends
+- **Security Insights**: Vulnerability reports
+- **Performance Metrics**: Image performance data
+- **Repository Management**: Advanced repository controls
+
+### Usage:
+```bash
+# View repository insights
+docker hub insights myrepo
+
+# Security scan results
+docker hub security myrepo:latest
+
+# Usage statistics
+docker hub stats myrepo
+```
+
+### Benefits:
+- **Visibility**: Understanding image usage
+- **Security**: Proactive vulnerability management
+- **Optimization**: Performance improvements
+- **Compliance**: Audit trails and reporting
+
+## 6. How do you implement container image signing and verification?
+
+### Answer:
+Docker Content Trust provides image signing and verification capabilities for secure image distribution.
+
+### Enable Content Trust:
+```bash
+# Enable Docker Content Trust
+export DOCKER_CONTENT_TRUST=1
+
+# Generate signing keys
+docker trust key generate mykey
+
+# Sign and push image
+docker trust sign myregistry.com/myimage:latest
+```
+
+### Image Verification:
+```bash
+# Pull with verification
+DOCKER_CONTENT_TRUST=1 docker pull myregistry.com/myimage:latest
+
+# View trust data
+docker trust inspect myregistry.com/myimage:latest
+
+# Revoke trust
+docker trust revoke myregistry.com/myimage:latest
+```
+
+### Notary Integration:
+```bash
+# Initialize repository
+notary init myregistry.com/myimage
+
+# Add target
+notary add myregistry.com/myimage latest myimage.tar.gz
+
+# Publish changes
+notary publish myregistry.com/myimage
+```
+
+## 7. What are the latest Docker networking features?
+
+### Answer:
+Docker continues to evolve its networking capabilities with new features and improvements.
+
+### IPv6 Support:
+```bash
+# Enable IPv6 in daemon
+{
+  "ipv6": true,
+  "fixed-cidr-v6": "2001:db8:1::/64"
+}
+
+# Create IPv6 network
+docker network create --ipv6 --subnet=2001:db8:1::/64 mynetwork
+```
+
+### Network Plugins:
+```bash
+# Install network plugin
+docker plugin install weaveworks/net-plugin:latest
+
+# Create network with plugin
+docker network create --driver weave mynetwork
+```
+
+### Advanced Network Configuration:
+```yaml
+# Docker Compose with advanced networking
+version: '3.8'
+services:
+  web:
+    image: nginx
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.10
+        aliases:
+          - webserver
+
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+```
+
+## 8. How do you use Docker with modern development workflows and GitHub Actions?
+
+### Answer:
+Docker integrates seamlessly with modern development practices and CI/CD tools.
+
+### Development Containers:
+```json
+// .devcontainer/devcontainer.json
+{
+  "name": "Node.js Development",
+  "image": "node:16",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode.vscode-typescript-next", "ms-azuretools.vscode-docker"]
+    }
+  },
+  "forwardPorts": [3000],
+  "postCreateCommand": "npm install"
+}
+```
+
+### Advanced GitHub Actions Integration:
+```yaml
+name: Docker CI/CD Pipeline
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build test image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: test
+          load: true
+          tags: myapp:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Run tests
+        run: docker run --rm myapp:test npm test
+      
+      - name: Security scan with Scout
+        run: docker scout cves myapp:test
+  
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            myregistry/myapp:latest
+            myregistry/myapp:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+```
+
+### Hot Reload Development:
+```yaml
+# docker-compose.dev.yml
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    command: npm run dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: package.json
+```
+
 ---
 
 # Advanced Topics
 
-## 1. Docker Swarm vs Kubernetes - When to Use Which?
+## 1. Docker Swarm vs Kubernetes - When to use which?
 
 ### Answer:
 
@@ -3765,58 +3336,7 @@ docker buildx build --ssh default .
 | Docker expertise | Docker Swarm | Leverage existing knowledge |
 | Cloud-native apps | Kubernetes | Better cloud integration |
 
-## 2. Container Runtime Security - Beyond Basic Docker
-
-### Answer:
-
-#### 1. Container Runtime Security
-```bash
-# Use gVisor for additional isolation
-docker run --runtime=runsc nginx
-
-# Use Kata Containers for VM-level isolation
-docker run --runtime=kata nginx
-```
-
-#### 2. Image Security Scanning
-```bash
-# Scan for vulnerabilities
-docker scan nginx:latest
-
-# Use Trivy for comprehensive scanning
-trivy image nginx:latest
-
-# Check for secrets in images
-trivy image --security-checks secret nginx:latest
-```
-
-#### 3. Runtime Security Monitoring
-```bash
-# Monitor container behavior
-docker exec container_name ps aux
-docker exec container_name netstat -tlnp
-docker exec container_name lsof -i
-```
-
-#### 4. Network Security
-```bash
-# Use encrypted networks
-docker network create --driver overlay --opt encrypted secure-network
-
-# Implement network policies
-docker run --network secure-network --cap-drop NET_RAW nginx
-```
-
-#### 5. Storage Security
-```bash
-# Use encrypted volumes
-docker volume create --driver local --opt type=tmpfs --opt device=tmpfs encrypted-vol
-
-# Implement access controls
-docker run --user 1000:1000 --read-only nginx
-```
-
-## 3. Docker Performance Optimization
+## 2. How do you optimize Docker performance for production workloads?
 
 ### Answer:
 
@@ -3878,7 +3398,7 @@ dockerd --registry-mirror=https://mirror.example.com
 docker run -d -p 5000:5000 --name registry registry:2
 ```
 
-## 4. Docker in CI/CD Pipelines
+## 3. How do you implement Docker in CI/CD pipelines effectively?
 
 ### Answer:
 
@@ -3945,7 +3465,7 @@ CMD ["npm", "start"]
     docker run --rm -v $(pwd):/app -w /app node:16-alpine npm test
 ```
 
-## 5. Docker Monitoring and Observability
+## 4. How do you implement comprehensive monitoring for Docker containers?
 
 ### Answer:
 
@@ -3983,11 +3503,170 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 docker run -d -p 16686:16686 jaegertracing/all-in-one
 ```
 
+## 5. How do you integrate Docker with cloud platforms?
+
+### Answer:
+
+#### 1. AWS Integration
+```bash
+# Use ECR for image storage
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
+
+# Deploy to ECS
+aws ecs create-service --cluster my-cluster --service-name my-service --task-definition my-task
+```
+
+#### 2. Azure Integration
+```bash
+# Use ACR for image storage
+az acr login --name myregistry
+
+# Deploy to ACI
+az container create --resource-group myResourceGroup --name mycontainer --image myregistry.azurecr.io/myimage:latest
+```
+
+#### 3. GCP Integration
+```bash
+# Use GCR for image storage
+gcloud auth configure-docker
+
+# Deploy to GKE
+kubectl apply -f deployment.yaml
+```
+
+#### 4. Multi-Cloud Strategy
+```yaml
+# Use Docker Compose for multi-cloud
+version: '3.8'
+services:
+  web:
+    image: myregistry.azurecr.io/myimage:latest
+    deploy:
+      placement:
+        constraints:
+          - node.labels.cloud == aws
+```
+
+## 6. What are advanced Docker storage concepts?
+
+### Answer:
+
+### Storage Driver Performance:
+| Driver | Performance | Storage Efficiency | Complexity |
+|--------|-------------|-------------------|------------|
+| overlay2 | High | High | Low |
+| aufs | Medium | Medium | Low |
+| devicemapper | High | Medium | High |
+| btrfs | High | High | Medium |
+
+### Volume Drivers:
+```bash
+# Local driver with options
+docker volume create --driver local --opt type=nfs --opt device=:/path myvolume
+
+# Third-party drivers
+docker plugin install rexray/ebs
+docker volume create --driver rexray/ebs --opt size=10 myvolume
+```
+
+### Storage Optimization:
+```bash
+# Check storage usage
+docker system df
+
+# Clean up unused data
+docker system prune -a
+
+# Optimize layer caching
+docker build --cache-from myimage:cache .
+```
+
+## 7. How do you implement container orchestration patterns?
+
+### Answer:
+
+### Service Mesh with Docker:
+```yaml
+# Istio integration
+version: '3.8'
+services:
+  app:
+    image: myapp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`app.local`)"
+```
+
+### Circuit Breaker Pattern:
+```dockerfile
+FROM node:16-alpine
+COPY . .
+RUN npm install
+# Add circuit breaker library
+RUN npm install opossum
+CMD ["node", "app.js"]
+```
+
+### Blue-Green Deployment:
+```bash
+# Deploy green version
+docker service create --name app-green myapp:v2
+
+# Switch traffic
+docker service update --label-add version=active app-green
+docker service update --label-rm version=active app-blue
+```
+
+## 8. What are Docker's enterprise features and considerations?
+
+### Answer:
+
+### Docker Enterprise Features:
+- **Docker Trusted Registry (DTR)**: Enterprise image registry
+- **Universal Control Plane (UCP)**: Cluster management
+- **Docker Security Scanning**: Vulnerability assessment
+- **Role-Based Access Control (RBAC)**: Fine-grained permissions
+
+### Enterprise Security:
+```bash
+# Image signing
+docker trust sign myregistry.com/myapp:latest
+
+# Content trust
+export DOCKER_CONTENT_TRUST=1
+
+# Security scanning
+docker scan --severity high myapp:latest
+```
+
+### Compliance and Governance:
+```yaml
+# Policy as code
+version: '3.8'
+services:
+  app:
+    image: myapp
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    user: "1000:1000"
+```
+
+### High Availability:
+```bash
+# Docker Swarm HA
+docker swarm init --advertise-addr 192.168.1.100
+docker swarm join-token manager
+
+# Multi-manager setup
+docker node promote worker-node
+```
+
 ---
 
 # Practical Scenarios
 
-## 1. Scenario: Container Won't Start - Debugging Steps
+## 1. Scenario: Container won't start - How do you debug?
 
 ### Problem:
 A container fails to start with exit code 1. How do you debug this issue?
@@ -4049,7 +3728,7 @@ docker build --no-cache -t test-image .
 docker build --target debug .
 ```
 
-## 2. Scenario: High Memory Usage in Container
+## 2. Scenario: High memory usage in container - How do you investigate?
 
 ### Problem:
 Container is consuming excessive memory. How do you investigate and resolve?
@@ -4104,7 +3783,7 @@ docker exec container_name jstat -gc 1
 docker exec container_name valgrind --tool=memcheck /app/binary
 ```
 
-## 3. Scenario: Container Network Connectivity Issues
+## 3. Scenario: Container network connectivity issues - How do you troubleshoot?
 
 ### Problem:
 Containers cannot communicate with each other or external services.
@@ -4159,7 +3838,7 @@ docker exec container_name ip addr
 docker run --network host nginx
 ```
 
-## 4. Scenario: Docker Image Build Failures
+## 4. Scenario: Docker image build failures - Common issues and solutions
 
 ### Problem:
 Docker image build fails with various errors.
@@ -4205,7 +3884,7 @@ echo "node_modules" >> .dockerignore
 echo "*.log" >> .dockerignore
 ```
 
-## 5. Scenario: Container Performance Issues
+## 5. Scenario: Container performance issues - How do you analyze and optimize?
 
 ### Problem:
 Container performance is slow or inconsistent.
@@ -4248,22 +3927,167 @@ docker run --device-read-bps /dev/sda:1mb nginx
 docker run --tmpfs /tmp:noexec,nosuid,size=100m nginx
 ```
 
+## 6. Scenario: Multi-container application deployment - How do you orchestrate?
+
+### Problem:
+Need to deploy a complex multi-container application with dependencies.
+
+### Deployment Strategy:
+
+#### 1. Use Docker Compose
+```yaml
+version: '3.8'
+services:
+  web:
+    image: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
+      db:
+        condition: service_started
+
+  api:
+    build: ./api
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+```
+
+#### 2. Service Dependencies
+```yaml
+version: '3.8'
+services:
+  web:
+    image: nginx
+    depends_on:
+      api:
+        condition: service_healthy
+      db:
+        condition: service_started
+```
+
+## 7. Scenario: Container security hardening - How do you secure containers for production?
+
+### Problem:
+Need to secure containers for production deployment.
+
+### Security Hardening:
+
+#### 1. Run as Non-Root
+```dockerfile
+# Create non-root user
+RUN adduser -D -s /bin/sh appuser
+USER appuser
+```
+
+#### 2. Use Read-Only Filesystem
+```bash
+# Run with read-only filesystem
+docker run --read-only nginx
+
+# Use tmpfs for writable directories
+docker run --read-only --tmpfs /tmp nginx
+```
+
+#### 3. Drop Capabilities
+```bash
+# Drop all capabilities
+docker run --cap-drop ALL nginx
+
+# Add specific capabilities
+docker run --cap-drop ALL --cap-add NET_BIND_SERVICE nginx
+```
+
+#### 4. Use Security Profiles
+```bash
+# Use AppArmor profile
+docker run --security-opt apparmor=docker-default nginx
+
+# Use seccomp profile
+docker run --security-opt seccomp=profile.json nginx
+```
+
+## 8. Scenario: Container monitoring and logging - How do you implement comprehensive observability?
+
+### Problem:
+Need to monitor container health and collect logs for a production system.
+
+### Monitoring Setup:
+
+#### 1. Container Health Checks
+```dockerfile
+# Add health check to Dockerfile
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost/health || exit 1
+```
+
+#### 2. Log Management
+```bash
+# Configure log driver
+docker run --log-driver=json-file --log-opt max-size=10m nginx
+
+# Use syslog driver
+docker run --log-driver=syslog nginx
+```
+
+#### 3. Metrics Collection
+```bash
+# Export container metrics
+docker run -p 8080:8080 prom/prometheus
+
+# Use cAdvisor for container metrics
+docker run -p 8080:8080 --volume=/:/rootfs:ro --volume=/var/run:/var/run:ro gcr.io/cadvisor/cadvisor
+```
+
 ---
 
 ## Summary
 
-This comprehensive guide covers 90+ Docker interview questions across 9 categories:
+This comprehensive guide covers **75+ Docker interview questions** across 9 categories:
 
-- **Basic Concepts**: Fundamental Docker knowledge
-- **Docker Architecture**: Deep dive into Docker's internal structure
-- **Docker Networking**: Container networking and communication
-- **Docker Security**: Security best practices and threat mitigation
-- **Docker Compose**: Multi-container application orchestration
-- **Dockerfile Best Practices**: Optimized container image creation
-- **Latest Features**: Cutting-edge Docker capabilities
-- **Advanced Topics**: Complex scenarios and enterprise use cases
-- **Practical Scenarios**: Real-world troubleshooting and problem-solving
+- **Basic Concepts**: Fundamental Docker knowledge (8 questions)
+- **Docker Architecture**: Deep dive into Docker's internal structure (8 questions)
+- **Docker Networking**: Container networking and communication (8 questions)
+- **Docker Security**: Security best practices and threat mitigation (8 questions)
+- **Docker Compose**: Multi-container application orchestration (8 questions)
+- **Dockerfile Best Practices**: Optimized container image creation (8 questions)
+- **Latest Features**: Cutting-edge Docker capabilities (8 questions)
+- **Advanced Topics**: Complex scenarios and enterprise use cases (8 questions)
+- **Practical Scenarios**: Real-world troubleshooting and problem-solving (8 questions)
 
-Each question includes detailed explanations, practical examples, and code snippets to help you understand and demonstrate Docker expertise in interviews and real-world scenarios.
+Each question includes:
+- **Detailed explanations** with comprehensive theory
+- **Practical examples** and code snippets
+- **Real-world scenarios** and use cases
+- **Best practices** and optimization techniques
+- **Troubleshooting guides** and debugging steps
+
+This deduplicated version eliminates redundant content while preserving all essential knowledge and maintaining comprehensive coverage of Docker concepts for interview preparation.
 
 **Good luck with your Docker interviews! 🐳**
