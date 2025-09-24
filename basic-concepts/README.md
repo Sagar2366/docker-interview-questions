@@ -441,7 +441,7 @@ Image A                    Image B
 │ Python install  │       │ Node.js install │
 ├─────────────────┤       ├─────────────────┤
 │                 │       │                 │
-│   Shared Base   │ ◄────► │   Shared Base   │
+│   Shared Base   │ ◄────►│   Shared Base   │
 │  Ubuntu:20.04   │       │  Ubuntu:20.04   │
 │                 │       │                 │
 └─────────────────┘       └─────────────────┘
@@ -456,10 +456,10 @@ Container 1        Container 2        Container 3
 │ Write Layer │   │ Write Layer │   │ Write Layer │
 ├─────────────┤   ├─────────────┤   ├─────────────┤
 │             │   │             │   │             │
-│        Shared Read-Only Layers        │
-│         (Image Layers)                │
-│                                       │
-└───────────────────────────────────────┘
+│        Shared Read-Only Layers                  │
+│         (Image Layers)                          │
+│                                                 │
+└─────────────────────────────────────────────────┘
 ```
 
 ### **Layer Caching Benefits:**
@@ -513,7 +513,7 @@ docker save nginx:alpine > nginx.tar
 
 #### **1. Order Instructions by Change Frequency:**
 ```dockerfile
-# ✅ Good - stable instructions first
+# Good - stable instructions first
 FROM node:16-alpine
 WORKDIR /app
 COPY package*.json ./      # Changes less frequently
@@ -521,7 +521,7 @@ RUN npm install
 COPY . .                   # Changes more frequently
 RUN npm run build
 
-# ❌ Bad - unstable instructions first
+# Bad - unstable instructions first
 FROM node:16-alpine
 COPY . .                   # Changes frequently
 RUN npm install            # Cache invalidated often
@@ -529,13 +529,13 @@ RUN npm install            # Cache invalidated often
 
 #### **2. Combine Related Commands:**
 ```dockerfile
-# ✅ Good - single layer
+# Good - single layer
 RUN apt-get update && \
     apt-get install -y curl git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# ❌ Bad - multiple layers
+# Bad - multiple layers
 RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y git
@@ -963,21 +963,12 @@ docker run -d --network none nginx
 - How would you optimize a Dockerfile for production?
 - What are the security implications of different Docker networking modes?
 - How do you handle secrets in Docker containers?
-- What is the difference between docker-compose and docker stack?─────────┐
-│ CMD ["app"] │ ──────────────► │ "new-cmd"   │
-└─────────────┘    new-cmd       └─────────────┘
-                                 (CMD replaced)
-
-ENTRYPOINT Behavior:
-┌──────────────────┐    docker run    ┌──────────────────┐
-│ ENTRYPOINT ["app"]│ ──────────────► │ "app" + "args"   │
-└──────────────────┘    args          └──────────────────┘
-                                      (args appended)
+- What is the difference between docker-compose and docker
 ```
 
 ### Practical Examples:
 
-#### **CMD Examples:**
+#### CMD Examples:
 ```dockerfile
 # Shell form (not recommended)
 CMD echo "Hello World"
@@ -1590,7 +1581,7 @@ docker start web -p 8080:80  # ❌ This won't work
 
 ### Container States Diagram:
 ```
-┌─────────────┐    docker run     ┌─────────────┐
+┌─────────────┐    docker run      ┌─────────────┐
 │    Image    │ ─────────────────► │   Running   │
 │             │                    │  Container  │
 └─────────────┘                    └──────┬──────┘
@@ -1672,7 +1663,7 @@ Proper cleanup of Docker resources is essential for maintaining system performan
 Running Container ──docker stop──► Stopped Container ──docker rm──► Removed
        │                                    │                         ▲
        │                                    │                         │
-       └────────────docker rm -f───────────┴─────────────────────────┘
+       └────────────docker rm -f────────────┴─────────────────────────┘
                     (force remove)
 ```
 
@@ -1715,10 +1706,10 @@ Image ──has containers──► Cannot Remove (Error)
   │
   └──no containers──► docker rmi ──► Removed
                            │
-                    ┌──────▼──────┐
+                    ┌──────▼───────┐
                     │ Remove layers│
                     │ (if unused)  │
-                    └─────────────┘
+                    └──────────────┘
 ```
 
 ### Image Removal Commands:
@@ -2193,12 +2184,12 @@ Docker provides multiple networking modes to handle different use cases, from si
 │  │ Container A │  │ Container B │  │ Container C │        │
 │  │   Bridge    │  │    Host     │  │    None     │        │
 │  └──────┬──────┘  └──────┬──────┘  └─────────────┘        │
-│         │                │                                 │
+│         │                │                                  │
 │  ┌──────▼──────┐        │         ┌─────────────┐        │
 │  │   docker0   │        │         │  No Network │        │
 │  │   Bridge    │        │         │  Interface  │        │
 │  └──────┬──────┘        │         └─────────────┘        │
-│         │                │                                 │
+│         │                │                                  │
 │  ┌──────▼────────────────▼─────────────────────────────┐  │
 │  │              Host Network Interface                 │  │
 │  └─────────────────────────────────────────────────────┘  │
@@ -2255,18 +2246,18 @@ Host Network Topology:
 ┌─────────────────────────────────────────┐
 │              Host System                │
 │                                         │
-│  ┌─────────────┐                       │
-│  │ Container   │                       │
-│  │ (no network │                       │
-│  │ namespace)  │                       │
-│  └─────────────┘                       │
+│  ┌─────────────┐                        │
+│  │ Container   │                        │
+│  │ (no network │                        │
+│  │ namespace)  │                        │
+│  └─────────────┘                        │
 │         │                               │
 │         │ (shares host network)         │
 │         │                               │
-│  ┌──────▼──────────────────────────┐   │
-│  │        Host Network             │   │
-│  │        192.168.1.x              │   │
-│  └─────────────────────────────────┘   │
+│  ┌──────▼──────────────────────────┐    │
+│  │        Host Network             │    │
+│  │        192.168.1.x              │    │
+│  └─────────────────────────────────┘    │
 └─────────────────────────────────────────┘
 ```
 
@@ -2292,12 +2283,12 @@ None Network Topology:
 ┌─────────────────────────────────────────┐
 │              Host System                │
 │                                         │
-│  ┌─────────────┐                       │
-│  │ Container   │                       │
-│  │             │                       │
-│  │ No Network  │                       │
-│  │ Interface   │                       │
-│  └─────────────┘                       │
+│  ┌─────────────┐                        │
+│  │ Container   │                        │
+│  │             │                        │
+│  │ No Network  │                        │
+│  │ Interface   │                        │
+│  └─────────────┘                        │
 │                                         │
 │  (Container completely isolated)        │
 │                                         │
@@ -2361,18 +2352,18 @@ Macvlan Network Topology:
 ┌─────────────────────────────────────────┐
 │              Host System                │
 │                                         │
-│  ┌─────────────┐  ┌─────────────┐      │
-│  │ Container A │  │ Container B │      │
-│  │ MAC: aa:bb  │  │ MAC: cc:dd  │      │
-│  │192.168.1.10 │  │192.168.1.11 │      │
-│  └──────┬──────┘  └──────┬──────┘      │
-│         │                │             │
-│         └────────┬───────┘             │
-│                  │                     │
-│           ┌──────▼──────┐              │
-│           │ Physical NIC│              │
-│           │192.168.1.x  │              │
-│           └─────────────┘              │
+│  ┌─────────────┐  ┌─────────────┐       │
+│  │ Container A │  │ Container B │       │
+│  │ MAC: aa:bb  │  │ MAC: cc:dd  │       │
+│  │192.168.1.10 │  │192.168.1.11 │       │
+│  └──────┬──────┘  └──────┬──────┘       │
+│         │                │              │
+│         └────────┬───────┘              │
+│                  │                      │
+│           ┌──────▼──────┐               │
+│           │ Physical NIC│               │
+│           │192.168.1.x  │               │
+│           └─────────────┘               │
 └─────────────────────────────────────────┘
 ```
 
