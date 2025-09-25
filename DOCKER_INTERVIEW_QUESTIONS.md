@@ -1,8 +1,12 @@
-# Docker Interview Questions - Complete Guide
-
-[![GitHub stars](https://img.shields.io/github/stars/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/network)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<div align="center">
+  <img src="https://www.docker.com/wp-content/uploads/2022/03/horizontal-logo-monochromatic-white.png" alt="Docker Logo" width="300"/>
+  
+  # Docker Interview Questions - Complete Guide
+  
+  [![GitHub stars](https://img.shields.io/github/stars/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/stargazers)
+  [![GitHub forks](https://img.shields.io/github/forks/Sagar2366/docker-interview-questions.svg)](https://github.com/Sagar2366/docker-interview-questions/network)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+</div>
 
 A comprehensive collection of **75+ Docker interview questions** with detailed answers, practical examples, and diagrams for DevOps and Site Reliability Engineering roles.
 
