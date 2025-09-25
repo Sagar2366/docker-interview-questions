@@ -43,23 +43,23 @@ Docker Architecture:
 ┌─────────────────────────────────────────────────────────────┐
 │                    Host Operating System                    │
 ├─────────────────────────────────────────────────────────────┤
-│                     Docker Engine                          │
+│                     Docker Engine                           │
 ├─────────────────────────────────────────────────────────────┤
-│  Container 1  │  Container 2  │  Container 3  │  Container 4 │
-│  App A        │  App B        │  App C        │  App D       │
-│  Libraries    │  Libraries    │  Libraries    │  Libraries   │
+│  Container 1  │  Container 2  │  Container 3  │  Container 4│
+│  App A        │  App B        │  App C        │  App D      │
+│  Libraries    │  Libraries    │  Libraries    │  Libraries  │
 └─────────────────────────────────────────────────────────────┘
 
 VM Architecture:
 ┌─────────────────────────────────────────────────────────────┐
 │                    Host Operating System                    │
 ├─────────────────────────────────────────────────────────────┤
-│                      Hypervisor                            │
+│                      Hypervisor                             │
 ├─────────────────────────────────────────────────────────────┤
 │    VM 1       │    VM 2       │    VM 3       │    VM 4     │
 │  Guest OS     │  Guest OS     │  Guest OS     │  Guest OS   │
-│  App A        │  App B        │  App C        │  App D       │
-│  Libraries    │  Libraries    │  Libraries    │  Libraries   │
+│  App A        │  App B        │  App C        │  App D      │
+│  Libraries    │  Libraries    │  Libraries    │  Libraries  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -86,30 +86,30 @@ A Docker image is a read-only template used to create containers, while a contai
 ```
 Docker Image (Template):
 ┌─────────────────────────────────────────────────────────────┐
-│                    Docker Image                            │
+│                    Docker Image                             │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 4: CMD ["nginx", "-g", "daemon off;"]              │
+│  Layer 4: CMD ["nginx", "-g", "daemon off;"]                │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 3: COPY index.html /usr/share/nginx/html/          │
+│  Layer 3: COPY index.html /usr/share/nginx/html/            │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 2: RUN apt-get install -y nginx                    │
+│  Layer 2: RUN apt-get install -y nginx                      │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 1: FROM ubuntu:20.04                               │
+│  Layer 1: FROM ubuntu:20.04                                 │
 └─────────────────────────────────────────────────────────────┘
 
 Docker Container (Running Instance):
 ┌─────────────────────────────────────────────────────────────┐
-│                 Docker Container                           │
+│                 Docker Container                            │
 ├─────────────────────────────────────────────────────────────┤
-│  Writable Layer: Container changes, logs, temp files      │
+│  Writable Layer: Container changes, logs, temp files        │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 4: CMD ["nginx", "-g", "daemon off;"] (Read-only)  │
+│  Layer 4: CMD ["nginx", "-g", "daemon off;"] (Read-only)    │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 3: COPY index.html /usr/share/nginx/html/ (R/O)    │
+│  Layer 3: COPY index.html /usr/share/nginx/html/ (R/O)      │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 2: RUN apt-get install -y nginx (Read-only)        │
+│  Layer 2: RUN apt-get install -y nginx (Read-only)          │
 ├─────────────────────────────────────────────────────────────┤
-│  Layer 1: FROM ubuntu:20.04 (Read-only)                   │
+│  Layer 1: FROM ubuntu:20.04 (Read-only)                     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -567,26 +567,26 @@ Docker uses a layered architecture with multiple runtime components working toge
 ### Complete Docker Architecture:
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                           Docker Architecture                                      │
+│                           Docker Architecture                                       │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                     │
 │  ┌─────────────────┐     REST API/gRPC     ┌─────────────────────────────────────┐  │
-│  │  Docker Client  │◄────────────────────►│         Docker Daemon              │  │
+│  │  Docker Client  │◄────────────────────► │         Docker Daemon                │  │
 │  │                 │                       │         (dockerd)                   │  │
 │  │ • docker build  │                       │                                     │  │
 │  │ • docker run    │                       │ ┌─────────────────────────────────┐ │  │
-│  │ • docker pull   │                       │ │        API Server              │ │  │
-│  │ • docker push   │                       │ │  • REST API endpoints          │ │  │
-│  │ • docker ps     │                       │ │  • Authentication              │ │  │
-│  └─────────────────┘                       │ │  • Request routing             │ │  │
-│                                             │ └─────────────────────────────────┘ │  │
+│  │ • docker pull   │                       │ │        API Server               │ │  │
+│  │ • docker push   │                       │ │  • REST API endpoints           │ │  │
+│  │ • docker ps     │                       │ │  • Authentication               │ │  │
+│  └─────────────────┘                       │ │  • Request routing              │ │  │
+│                                            │ └─────────────────────────────────┘ │  │
 │  ┌─────────────────┐                       │                                     │  │
 │  │ Docker Compose  │                       │ ┌─────────────────────────────────┐ │  │
 │  │                 │                       │ │     Object Management           │ │  │
-│  │ • Multi-service │                       │ │  • Images                      │ │  │
-│  │ • Orchestration │                       │ │  • Containers                  │ │  │
-│  └─────────────────┘                       │ │  • Networks                    │ │  │
-│                                             │ │  • Volumes                     │ │  │
+│  │ • Multi-service │                       │ │  • Images                       │ │  │
+│  │ • Orchestration │                       │ │  • Containers                   │ │  │
+│  └─────────────────┘                       │ │  • Networks                     │ │  │
+│                                            │ │  • Volumes                      │ │  │
 │  ┌─────────────────┐                       │ └─────────────────────────────────┘ │  │
 │  │   Third-party   │                       │                                     │  │
 │  │     Tools       │                       │ ┌─────────────────────────────────┐ │  │
@@ -595,30 +595,30 @@ Docker uses a layered architecture with multiple runtime components working toge
 │  │ • Kubernetes    │                       │ │        containerd               │ │  │
 │  │ • CI/CD Tools   │                       │ │                                 │ │  │
 │  └─────────────────┘                       │ └─────────────┬───────────────────┘ │  │
-│                                             └───────────────┼─────────────────────┘  │
-│                                                             │                        │
+│                                            └───────────────┼─────────────────────┘  │
+│                                                            │                        │
 │  ┌─────────────────────────────────────────────────────────┼─────────────────────┐  │
-│  │                    Container Runtime Layer               │                     │  │
-│  │                                                          ▼                     │  │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐           │  │
-│  │  │  containerd-    │    │  containerd-    │    │  containerd-    │           │  │
-│  │  │     shim        │    │     shim        │    │     shim        │           │  │
-│  │  └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘           │  │
-│  │            │                      │                      │                   │  │
-│  │            ▼                      ▼                      ▼                   │  │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐           │  │
-│  │  │      runc       │    │      runc       │    │      runc       │           │  │
-│  │  └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘           │  │
-│  │            │                      │                      │                   │  │
-│  │            ▼                      ▼                      ▼                   │  │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐           │  │
-│  │  │   Container 1   │    │   Container 2   │    │   Container 3   │           │  │
-│  │  │                 │    │                 │    │                 │           │  │
-│  │  │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │           │  │
-│  │  │ │ Application │ │    │ │ Application │ │    │ │ Application │ │           │  │
-│  │  │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │           │  │
-│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘           │  │
-│  └─────────────────────────────────────────────────────────────────────────────┘  │
+│  │                    Container Runtime Layer               │                    │  │
+│  │                                                          ▼                    │  │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐            │  │
+│  │  │  containerd-    │    │  containerd-    │    │  containerd-    │            │  │
+│  │  │     shim        │    │     shim        │    │     shim        │            │  │
+│  │  └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘            │  │
+│  │            │                      │                      │                    │  │
+│  │            ▼                      ▼                      ▼                    │  │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐            │  │
+│  │  │      runc       │    │      runc       │    │      runc       │            │  │
+│  │  └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘            │  │
+│  │            │                      │                      │                    │  │
+│  │            ▼                      ▼                      ▼                    │  │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐            │  │
+│  │  │   Container 1   │    │   Container 2   │    │   Container 3   │            │  │
+│  │  │                 │    │                 │    │                 │            │  │
+│  │  │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │            │  │
+│  │  │ │ Application │ │    │ │ Application │ │    │ │ Application │ │            │  │
+│  │  │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │            │  │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘            │  │
+│  └───────────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 
                                         ▲
@@ -673,10 +673,10 @@ containerd is a high-level container runtime that serves as the core container r
 
 ### containerd Architecture:
 ```
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                              containerd                                            │
-├─────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                     │
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│                              containerd                                           │
+├───────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                   │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │
 │  │   Docker CLI    │    │   Kubernetes    │    │   Other Tools   │                │
 │  │                 │    │     (CRI)       │    │                 │                │
@@ -686,9 +686,9 @@ containerd is a high-level container runtime that serves as the core container r
 │                                   │                                               │
 │                                   ▼                                               │
 │  ┌─────────────────────────────────────────────────────────────────────────────┐  │
-│  │                        containerd API                                      │  │
+│  │                        containerd API                                       │  │
 │  └─────────────────────────────────────────────────────────────────────────────┘  │
-│                                                                                     │
+│                                                                                   │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │
 │  │     Images      │    │   Containers    │    │    Snapshots    │                │
 │  │                 │    │                 │    │                 │                │
@@ -696,7 +696,7 @@ containerd is a high-level container runtime that serves as the core container r
 │  │ • Store         │    │ • Start/Stop    │    │ • CoW Support   │                │
 │  │ • Metadata      │    │ • Monitor       │    │ • Diff Service  │                │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘                │
-│                                                                                     │
+│                                                                                   │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                │
 │  │    Runtime      │    │     Events      │    │    Plugins      │                │
 │  │                 │    │                 │    │                 │                │
@@ -704,7 +704,7 @@ containerd is a high-level container runtime that serves as the core container r
 │  │ • Shim Mgmt     │    │ • Streaming     │    │ • Custom Logic  │                │
 │  │ • Task API      │    │ • Monitoring    │    │ • Third-party   │                │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘                │
-└─────────────────────────────────────────────────────────────────────────────────────┘
+└───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### containerd Features:
@@ -774,25 +774,25 @@ Docker uses Linux namespaces for process isolation and cgroups for resource mana
 ### Namespace Isolation:
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                              Host System                                           │
+│                              Host System                                            │
 │                                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐  │
-│  │                         Container                                           │  │
-│  │                                                                             │  │
-│  │  PID Namespace:     │  Network Namespace:  │  Mount Namespace:            │  │
-│  │  ┌─────────────┐    │  ┌─────────────┐     │  ┌─────────────┐             │  │
-│  │  │ PID 1: init │    │  │ eth0: veth  │     │  │ /: rootfs   │             │  │
-│  │  │ PID 2: app  │    │  │ lo: loopback│     │  │ /proc: proc │             │  │
-│  │  └─────────────┘    │  └─────────────┘     │  │ /sys: sysfs │             │  │
-│  │                     │                      │  └─────────────┘             │  │
-│  │                                                                             │  │
-│  │  IPC Namespace:     │  UTS Namespace:      │  User Namespace:             │  │
-│  │  ┌─────────────┐    │  ┌─────────────┐     │  ┌─────────────┐             │  │
-│  │  │ Msg Queues  │    │  │ Hostname    │     │  │ UID mapping │             │  │
-│  │  │ Semaphores  │    │  │ Domain name │     │  │ GID mapping │             │  │
-│  │  │ Shared Mem  │    │  └─────────────┘     │  └─────────────┘             │  │
-│  │  └─────────────┘    │                      │                               │  │
-│  └─────────────────────────────────────────────────────────────────────────────┘  │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │                         Container                                           │    │
+│  │                                                                             │    │
+│  │  PID Namespace:     │  Network Namespace:  │  Mount Namespace:              │    │
+│  │  ┌─────────────┐    │  ┌─────────────┐     │  ┌─────────────┐               │    │
+│  │  │ PID 1: init │    │  │ eth0: veth  │     │  │ /: rootfs   │               │    │
+│  │  │ PID 2: app  │    │  │ lo: loopback│     │  │ /proc: proc │               │    │
+│  │  └─────────────┘    │  └─────────────┘     │  │ /sys: sysfs │               │    │
+│  │                     │                      │  └─────────────┘               │    │
+│  │                                                                             │    │
+│  │  IPC Namespace:     │  UTS Namespace:      │  User Namespace:               │    │
+│  │  ┌─────────────┐    │  ┌─────────────┐     │  ┌─────────────┐               │    │
+│  │  │ Msg Queues  │    │  │ Hostname    │     │  │ UID mapping │               │    │
+│  │  │ Semaphores  │    │  │ Domain name │     │  │ GID mapping │               │    │
+│  │  │ Shared Mem  │    │  └─────────────┘     │  └─────────────┘               │    │
+│  │  └─────────────┘    │                      │                                │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -975,21 +975,21 @@ Host Network Stack
 ┌─────────────────────────────────────────────────────────────┐
 │                    Host Network                             │
 │                                                             │
-│  ┌─────────────────┐    ┌─────────────────┐                │
-│  │   Physical      │    │    Virtual      │                │
-│  │   Interface     │    │   Interfaces    │                │
-│  │   (eth0)        │    │   (docker0)     │                │
-│  └─────────────────┘    └─────────────────┘                │
-│           │                       │                        │
-│           │                       │                        │
-│  ┌─────────────────────────────────────────────────────────┐ │
-│  │              Container Network Namespaces               │ │
-│  │                                                         │ │
+│  ┌─────────────────┐    ┌─────────────────┐                 │
+│  │   Physical      │    │    Virtual      │                 │
+│  │   Interface     │    │   Interfaces    │                 │
+│  │   (eth0)        │    │   (docker0)     │                 │
+│  └─────────────────┘    └─────────────────┘                 │
+│           │                       │                         │
+│           │                       │                         │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │              Container Network Namespaces              │ │
+│  │                                                        │ │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │ │
 │  │  │ Container 1 │  │ Container 2 │  │ Container 3 │     │ │
 │  │  │   (veth)    │  │   (veth)    │  │   (veth)    │     │ │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘     │ │
-│  └─────────────────────────────────────────────────────────┘ │
+│  └────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -1016,7 +1016,7 @@ Docker provides a REST API for programmatic access to Docker functionality.
 ### API Architecture:
 ```
 ┌─────────────────┐    HTTP/REST API    ┌─────────────────┐
-│   API Client    │◄──────────────────►│  Docker Daemon  │
+│   API Client    │◄──────────────────► │  Docker Daemon  │
 │                 │                     │                 │
 │ • curl          │                     │ • API Server    │
 │ • Python SDK    │                     │ • Request       │
